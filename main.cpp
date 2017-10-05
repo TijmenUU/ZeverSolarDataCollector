@@ -181,7 +181,6 @@ public:
 
 						case ConfigurationTag::UNKNOWN:
 						default:
-						std::cout << "Unknown tag " << tagstr << std::endl; // DEBUG
 						break;
 					}
 				}
