@@ -360,7 +360,8 @@ bool WriteArchive(const Configuration & config,
 		config.ArchivearchiveFileExtension();
 
 	std::ofstream archiveOut;
-	archiveOut.open(storagePath);
+	archiveOut.open(storagePath, 
+		std::fstream::out | std::fstream::app);
 	if(archiveOut.is_open())
 	{
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
