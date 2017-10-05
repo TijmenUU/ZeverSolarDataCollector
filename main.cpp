@@ -442,6 +442,16 @@ int main(int argc, char ** argv)
 		config.LoadFromFile(cConfigFile);
 	}
 
+	// DEBUG
+	std::cout << "Fetching " << config.URLtoFetch() << std::endl;
+	if(config.WriteOnFailure())
+		std::cout << "Writing zeroes if fetch fails." << std::endl;
+	if(config.WriteArchive())
+		std::cout << "Archiving at " << config.ArchiveStorageLocation() << std::endl;
+	if(config.WriteReport())
+		std::cout << "Reporting to " << config.ReportFileLocation() << std::endl;
+	// END DEBUG
+
 	if(!config.IsValid())
 	{
 		//throw std::runtime_error("The given configuration is invalid.");
