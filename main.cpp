@@ -177,6 +177,7 @@ public:
 
 						case ConfigurationTag::UNKNOWN:
 						default:
+						std::cout << "Unknown tag " << tagstr << std::endl; // DEBUG
 						break;
 					}
 				}
@@ -189,7 +190,7 @@ public:
 		}
 
 		isValid = Validate();
-		return isValid;
+		return true;
 	}
 
 	// Getters
@@ -435,11 +436,31 @@ int main(int argc, char ** argv)
 	Configuration config;
 	if(argc > 1)
 	{
-		config.LoadFromFile(argv[1]);
+		//config.LoadFromFile(argv[1])
+		// DEBUG
+		if(config.LoadFromFile(argv[1]))
+		{
+			std::cout << "Loaded succesfully from " << argv[1] << std::endl;
+		}
+		else
+		{
+			std::cout << "Failed to load from " << argv[1] << std::endl;
+		}
+		// END DEBUG
 	}
 	else
 	{
-		config.LoadFromFile(cConfigFile);
+		//config.LoadFromFile(cConfigFile);
+		// DEBUG
+		if(config.LoadFromFile(cConfigFile))
+		{
+			std::cout << "Loaded succesfully from " << cConfigFile << std::endl;
+		}
+		else
+		{
+			std::cout << "Failed to load from " << cConfigFile << std::endl;
+		}
+		// END DEBUG
 	}
 
 	// DEBUG
@@ -453,8 +474,8 @@ int main(int argc, char ** argv)
 
 	if(!config.IsValid())
 	{
-		//throw std::runtime_error("The given configuration is invalid.");
-		std::cerr << "The given configuration is invalid." << std::endl;
+		//throw std::runtime_error("The loaded configuration is invalid.");
+		std::cerr << "The loaded configuration is invalid." << std::endl;
 
 		return 0;
 	}
