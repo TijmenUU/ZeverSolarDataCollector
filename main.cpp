@@ -1,4 +1,6 @@
-#include <curl/curl.h> // libcurl is a dependency
+#ifdef __linux__
+    #include <curl/curl.h> // libcurl is a dependency
+#endif
 
 #include <algorithm> // find, transform, tolower
 #include <array>
@@ -32,6 +34,7 @@ const std::array<const std::string, 7> cConfigurationTags = {
 	"reportLocation"
 };
 
+const int cFirstNoElement = 2;
 const std::array<const std::string, 4> cConfigurationBinaryValues = {
 	"yes",
 	"y",
@@ -95,7 +98,7 @@ protected:
 		}
 		else
 		{
-			return (result - cConfigurationBinaryValues.begin()) > 1;
+		 	return (result - cConfigurationBinaryValues.begin()) < cFirstNoElement;
 		}
 	}
 
@@ -137,6 +140,7 @@ public:
 
 				std::stringstream line;
 				line.str(rawLine);
+				line >> std::skipws; // ignore whitespaces
 
 				std::string tagstr, valuestr;
 				if(line >> tagstr && line >> valuestr)
@@ -289,42 +293,50 @@ size_t headerdata2str_callback(char * buffer,
 	return size * nitems;
 }
 
-// TODO Move into class
-ZeverData FetchData(const Configuration & config)
-{
-	ZeverData result;
-
-	curl_global_init(CURL_GLOBAL_ALL);
-
-	CURL * curl = curl_easy_init();
-
-	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-	std::string buffer;
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-
-	curl_easy_setopt(curl, CURLOPT_URL, config.URLtoFetch().c_str());
-
-	buffer.reserve(256);
-	if (curl_easy_perform(curl) == CURLE_OK)
+#ifdef __linux__
+	// TODO Move into class
+	ZeverData FetchData(const Configuration & config)
 	{
-		buffer.shrink_to_fit();
+		ZeverData result;
 
-		result = ZeverData(buffer);
+		curl_global_init(CURL_GLOBAL_ALL);
+
+		CURL * curl = curl_easy_init();
+
+		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+		std::string buffer;
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+
+		curl_easy_setopt(curl, CURLOPT_URL, config.URLtoFetch().c_str());
+
+		buffer.reserve(256);
+		if (curl_easy_perform(curl) == CURLE_OK)
+		{
+			buffer.shrink_to_fit();
+
+			result = ZeverData(buffer);
+		}
+
+		curl_easy_cleanup(curl);
+
+		return result;
 	}
-
-	curl_easy_cleanup(curl);
-
-	return result;
-}
+#elif _WIN32
+	// TODO Move into class
+	ZeverData FetchData(const Configuration & config)
+	{
+		return ZeverData("1\n1\nEAB961734431\nNH7JXLPVXDNXXQTK\nM11\n16B21-663R+16B21-658R\n00:26\n07/01/2070\nError\n1\nBS30006011730473\n675\n1.46\nOK\nError");
+	}
+#endif
 
 // TODO Move into class
 // Helper method
 std::string GetTimeStr(const std::time_t & _time, const char * format)
 {
-	const size_t strBufferSize = 32U;
+	const size_t strBufferSize = 21U;
 
 	tm * timeInfo;
 	std::string result;
@@ -354,7 +366,7 @@ bool WriteArchive(const Configuration & config,
 	archiveOut.open(storagePath, std::fstream::out | std::fstream::app); //append
 	if(archiveOut.is_open())
 	{
-		archiveOut << GetTimeStr(now, "%H:%M:%S") << ' ';
+		archiveOut << GetTimeStr(now, "%H:%M:%S");
 		if(data.IsValid())
 		{
 			archiveOut << data.currentPower << ' ' << data.powerToday << std::endl;
@@ -410,7 +422,7 @@ bool WriteReport(const Configuration & config,
 	{
 		if(data.IsValid())
 		{
-			reportFileOut << isotime << ' ' << data.currentPower << ' ';
+			reportFileOut << isotime << data.currentPower << ' ';
 			reportFileOut << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
@@ -436,31 +448,11 @@ int main(int argc, char ** argv)
 	Configuration config;
 	if(argc > 1)
 	{
-		//config.LoadFromFile(argv[1])
-		// DEBUG
-		if(config.LoadFromFile(argv[1]))
-		{
-			std::cout << "Loaded succesfully from " << argv[1] << std::endl;
-		}
-		else
-		{
-			std::cout << "Failed to load from " << argv[1] << std::endl;
-		}
-		// END DEBUG
+		config.LoadFromFile(argv[1]);
 	}
 	else
 	{
-		//config.LoadFromFile(cConfigFile);
-		// DEBUG
-		if(config.LoadFromFile(cConfigFile))
-		{
-			std::cout << "Loaded succesfully from " << cConfigFile << std::endl;
-		}
-		else
-		{
-			std::cout << "Failed to load from " << cConfigFile << std::endl;
-		}
-		// END DEBUG
+		config.LoadFromFile(cConfigFile);
 	}
 
 	// DEBUG
