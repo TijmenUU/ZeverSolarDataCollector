@@ -1,7 +1,3 @@
-#ifdef __linux__
-    #include <curl/curl.h> // libcurl is a dependency
-#endif
-
 #include <algorithm> // find, transform, tolower
 #include <array>
 #include <chrono>
@@ -10,9 +6,12 @@
 #include <fstream>
 #include <iomanip> // put_time
 #include <iostream>
+#include <curl/curl.h> // tested with libcurl4-openSSH
 #include <sstream> // stringstream
 #include <stdlib.h> // defines putenv in POSIX
 #include <string>
+#include <sys/types.h> // include before stat.h
+#include <sys/stat.h>
 #include <vector>
 
 /* CONFIGURATION FILE */
@@ -292,44 +291,36 @@ size_t headerdata2str_callback(char * buffer,
 	return size * nitems;
 }
 
-#ifdef __linux__
-	// TODO Move into class
-	ZeverData FetchData(const Configuration & config)
+// TODO Move into class
+ZeverData FetchData(const Configuration & config)
+{
+	ZeverData result;
+
+	curl_global_init(CURL_GLOBAL_ALL);
+
+	CURL * curl = curl_easy_init();
+
+	curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
+	//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+
+	std::string buffer;
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+
+	curl_easy_setopt(curl, CURLOPT_URL, config.URLtoFetch().c_str());
+
+	buffer.reserve(256);
+	if (curl_easy_perform(curl) == CURLE_OK)
 	{
-		ZeverData result;
+		buffer.shrink_to_fit();
 
-		curl_global_init(CURL_GLOBAL_ALL);
-
-		CURL * curl = curl_easy_init();
-
-		curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 1L);
-		//curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-		std::string buffer;
-		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
-		curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
-
-		curl_easy_setopt(curl, CURLOPT_URL, config.URLtoFetch().c_str());
-
-		buffer.reserve(256);
-		if (curl_easy_perform(curl) == CURLE_OK)
-		{
-			buffer.shrink_to_fit();
-
-			result = ZeverData(buffer);
-		}
-
-		curl_easy_cleanup(curl);
-
-		return result;
+		result = ZeverData(buffer);
 	}
-#elif _WIN32
-	// TODO Move into class
-	ZeverData FetchData(const Configuration & config)
-	{
-		return ZeverData("1\n1\nEAB961734431\nNH7JXLPVXDNXXQTK\nM11\n16B21-663R+16B21-658R\n00:26\n07/01/2070\nError\n1\nBS30006011730473\n675\n1.46\nOK\nError");
-	}
-#endif
+
+	curl_easy_cleanup(curl);
+
+	return result;
+}
 
 // TODO Move into class
 // Helper method
@@ -344,7 +335,7 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 	timeInfo = localtime(&_time);
 	strftime(&result[0], strBufferSize, format, timeInfo);
 
-	result.shrink_to_fit();
+	result.resize(strBufferSize - 1); // remove trailing \0
 	return result;
 }
 
@@ -353,16 +344,42 @@ bool WriteArchive(const Configuration & config,
 	const ZeverData & data)
 {
 	const std::time_t now = time(0);
-	const std::string subfolder = GetTimeStr(now, "%Y");
-	const std::string fileName = GetTimeStr(now, "%m-%d");
-	const std::string storagePath = config.ArchiveStorageLocation() +
-		subfolder +
+	const std::string subfolder = config.ArchiveStorageLocation() +
+		GetTimeStr(now, "%Y");
+	const std::string fileName = GetTimeStr(now, "%m_%d");
+
+	umask(0); // set mask for file creation
+	struct stat st = {0};
+	if(stat(subfolder.c_str(), &st) != 0) // does it exist?
+	{
+		if(mkdir(subfolder.c_str(), 0777) != 0) // no, create it
+		{
+			std::cout << "mkdir " << subfolder.c_str() << " failed." << std::endl; // DEBUG
+			return false; // cannot create subfolder, abort
+		}
+		else
+		{
+			std::cout << "mkdir " << subfolder.c_str() << " success." << std::endl; // DEBUG
+		}
+	}
+
+	const std::string storagePath = subfolder +
 		'/' +
 		fileName +
 		config.ArchivearchiveFileExtension();
 
 	std::ofstream archiveOut;
-	archiveOut.open(storagePath, std::fstream::out | std::fstream::app); //append
+	if(stat(storagePath.c_str(), &st) != 0) // does file exist?
+	{
+		std::cout << storagePath << " does not exist." << std::endl;
+		archiveOut.open(storagePath); // Create file
+	}
+	else
+	{
+		std::cout << "Appending to " << storagePath << std::endl;
+		archiveOut.open(storagePath, std::fstream::out | std::fstream::app); //append
+	}
+
 	if(archiveOut.is_open())
 	{
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
@@ -379,6 +396,10 @@ bool WriteArchive(const Configuration & config,
 
 		return true;
 	}
+	else
+	{
+		std::cout << "Failed to open: " << storagePath << std::endl; // DEBUG
+	}
 
 	return false;
 }
@@ -390,6 +411,7 @@ bool WriteReport(const Configuration & config,
 	const std::time_t now = time(0);
 	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%SZ");
 
+	umask(0); // set mask for file creation
 	std::ofstream reportFileOut;
 	std::ifstream reportFileIn;
 	reportFileIn.open(config.ReportFileLocation());
@@ -414,7 +436,8 @@ bool WriteReport(const Configuration & config,
 	}
 	else
 	{
-		reportFileOut.open(config.ReportFileLocation()); // create file
+		reportFileOut.open(config.ReportFileLocation(),
+			std::fstream::out | std::fstream::trunc); // create file or truncate
 	}
 
 	if(reportFileOut.is_open())
