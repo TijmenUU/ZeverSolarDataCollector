@@ -195,7 +195,7 @@ public:
 	// Getters
 	bool IsValid() const { return isValid; }
 	std::string URLtoFetch() const { return fetchURL; }
-	bool WriteToArchive() const { return writeToArchive; }
+	bool WriteArchive() const { return writeToArchive; }
 	bool WriteOnFailure() const { return writeOnFailure; }
 	std::string ArchiveStorageLocation() const { return archiveDirectory; }
 	std::string ArchivearchiveFileExtension() const { return archiveFileExtension; }
