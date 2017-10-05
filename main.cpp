@@ -323,19 +323,18 @@ ZeverData FetchData(const Configuration & config)
 }
 
 // TODO Move into class
-// Helper method
+// Helper method. Limited to 64 char length strings for now.
 std::string GetTimeStr(const std::time_t & _time, const char * format)
 {
-	const size_t strBufferSize = 21U;
+	const size_t strBufferSize = 64U;
 
 	tm * timeInfo;
-	std::string result;
-	result.resize(strBufferSize);
-
+	const char buffer[strBufferSize];
 	timeInfo = localtime(&_time);
-	strftime(&result[0], strBufferSize, format, timeInfo);
+	strftime(buffer, strBufferSize, format, timeInfo);
 
-	result.resize(strBufferSize - 1); // remove trailing \0
+	std::string result;
+	result.assign(buffer);
 	return result;
 }
 
@@ -369,17 +368,6 @@ bool WriteArchive(const Configuration & config,
 		config.ArchivearchiveFileExtension();
 
 	std::ofstream archiveOut;
-	if(stat(storagePath.c_str(), &st) != 0) // does file exist?
-	{
-		std::cout << storagePath << " does not exist." << std::endl;
-		archiveOut.open(storagePath); // Create file
-	}
-	else
-	{
-		std::cout << "Appending to " << storagePath << std::endl;
-		archiveOut.open(storagePath, std::fstream::out | std::fstream::app); //append
-	}
-
 	if(archiveOut.is_open())
 	{
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
