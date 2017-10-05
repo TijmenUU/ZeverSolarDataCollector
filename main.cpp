@@ -457,7 +457,7 @@ int main(int argc, char ** argv)
 		std::cerr << "Error during archiving, check your config file." << std::endl;
 	}
 
-	if(config.WriteReport() && !WriteArchive(config, data))
+	if(config.WriteReport() && !WriteReport(config, data))
 	{
 		//throw std::runtime_error("Error during writing of the report file.");
 		std::cerr << "Error during writing of the report file." << std::endl;
