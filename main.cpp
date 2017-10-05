@@ -322,10 +322,17 @@ ZeverData FetchData(const Configuration & config)
 // Helper method
 std::string GetTimeStr(const std::time_t & _time, const char * format)
 {
-	std::stringstream ss;
-	ss << std::put_time(std::localtime(&_time), format);
+	const size_t strBufferSize = 32U;
 
-	return ss.str();
+	tm * timeInfo;
+	std::string result;
+	result.resize(strBufferSize);
+
+	timeInfo = localtime(&_time);
+	strftime(&result[0], strBufferSize, format, timeInfo);
+
+	result.shrink_to_fit();
+	return result;
 }
 
 // TODO Move into class
