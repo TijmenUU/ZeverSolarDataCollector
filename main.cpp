@@ -461,7 +461,7 @@ int main(int argc, char ** argv)
 	}
 
 	auto data = FetchData(config);
-	if(config.WriteToArchive() && !WriteArchive(config, data))
+	if(config.WriteArchive() && !WriteArchive(config, data))
 	{
 		//throw std::runtime_error("Error during archiving, check your config file.");
 		std::cerr << "Error during archiving, check your config file." << std::endl;
