@@ -444,12 +444,11 @@ int main(int argc, char ** argv)
 
 	// DEBUG
 	std::cout << "Fetching " << config.URLtoFetch() << std::endl;
-	if(config.WriteOnFailure())
-		std::cout << "Writing zeroes if fetch fails." << std::endl;
-	if(config.WriteArchive())
-		std::cout << "Archiving at " << config.ArchiveStorageLocation() << std::endl;
-	if(config.WriteReport())
-		std::cout << "Reporting to " << config.ReportFileLocation() << std::endl;
+	std::cout << "Write on failure: " << config.WriteOnFailure() << std::endl;
+	std::cout << "Write to archive: " << config.WriteArchive() << std::endl;
+	std::cout << "\tArchiving at " << config.ArchiveStorageLocation() << std::endl;
+	std::cout << "Write a report: " << config.WriteReport() << std::endl;
+	std::cout << "\tReporting to " << config.ReportFileLocation() << std::endl;
 	// END DEBUG
 
 	if(!config.IsValid())
