@@ -1,14 +1,11 @@
 #include <algorithm> // find, transform, tolower
 #include <array>
-#include <chrono>
 #include <ctime>
 #include <exception>
 #include <fstream>
-#include <iomanip> // put_time
-#include <iostream>
+#include <iomanip> // skipws
 #include <curl/curl.h> // tested with libcurl4-openSSH
 #include <sstream> // stringstream
-#include <stdlib.h> // defines putenv in POSIX
 #include <string>
 #include <sys/types.h> // include before stat.h
 #include <sys/stat.h>
@@ -329,7 +326,7 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 	const size_t strBufferSize = 64U;
 
 	tm * timeInfo;
-	const char buffer[strBufferSize];
+	char buffer[strBufferSize];
 	timeInfo = localtime(&_time);
 	strftime(buffer, strBufferSize, format, timeInfo);
 
@@ -353,12 +350,7 @@ bool WriteArchive(const Configuration & config,
 	{
 		if(mkdir(subfolder.c_str(), 0777) != 0) // no, create it
 		{
-			std::cout << "mkdir " << subfolder.c_str() << " failed." << std::endl; // DEBUG
 			return false; // cannot create subfolder, abort
-		}
-		else
-		{
-			std::cout << "mkdir " << subfolder.c_str() << " success." << std::endl; // DEBUG
 		}
 	}
 
@@ -368,25 +360,22 @@ bool WriteArchive(const Configuration & config,
 		config.ArchivearchiveFileExtension();
 
 	std::ofstream archiveOut;
+	archiveOut.open(storagePath);
 	if(archiveOut.is_open())
 	{
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
 		if(data.IsValid())
 		{
-			archiveOut << data.currentPower << ' ' << data.powerToday << std::endl;
+			archiveOut << ' ' << data.currentPower << ' ' << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
 		{
-			archiveOut << 0 << ' ' << 0.0 << std::endl;
+			archiveOut << ' ' << 0 << ' ' << 0.0 << std::endl;
 		}
 
 		archiveOut.close();
 
 		return true;
-	}
-	else
-	{
-		std::cout << "Failed to open: " << storagePath << std::endl; // DEBUG
 	}
 
 	return false;
@@ -466,33 +455,31 @@ int main(int argc, char ** argv)
 	}
 
 	// DEBUG
-	std::cout << "Fetching " << config.URLtoFetch() << std::endl;
-	std::cout << "Write on failure: " << config.WriteOnFailure() << std::endl;
-	std::cout << "Write to archive: " << config.WriteArchive() << std::endl;
-	std::cout << "\tArchiving at " << config.ArchiveStorageLocation() << std::endl;
-	std::cout << "Write a report: " << config.WriteReport() << std::endl;
-	std::cout << "\tReporting to " << config.ReportFileLocation() << std::endl;
+	//std::cout << "Fetching " << config.URLtoFetch() << std::endl;
+	//std::cout << "Write on failure: " << config.WriteOnFailure() << std::endl;
+	//std::cout << "Write to archive: " << config.WriteArchive() << std::endl;
+	//std::cout << "\tArchiving at " << config.ArchiveStorageLocation() << std::endl;
+	//std::cout << "Write a report: " << config.WriteReport() << std::endl;
+	//std::cout << "\tReporting to " << config.ReportFileLocation() << std::endl;
 	// END DEBUG
 
 	if(!config.IsValid())
 	{
-		//throw std::runtime_error("The loaded configuration is invalid.");
-		std::cerr << "The loaded configuration is invalid." << std::endl;
-
-		return 0;
+		throw std::runtime_error("The loaded configuration is invalid.");
+		//std::cerr << "The loaded configuration is invalid." << std::endl;
 	}
 
 	auto data = FetchData(config);
 	if(config.WriteArchive() && !WriteArchive(config, data))
 	{
-		//throw std::runtime_error("Error during archiving, check your config file.");
-		std::cerr << "Error during archiving, check your config file." << std::endl;
+		throw std::runtime_error("Error during archiving, check your config file.");
+		//std::cerr << "Error during archiving, check your config file." << std::endl;
 	}
 
 	if(config.WriteReport() && !WriteReport(config, data))
 	{
-		//throw std::runtime_error("Error during writing of the report file.");
-		std::cerr << "Error during writing of the report file." << std::endl;
+		throw std::runtime_error("Error during writing of the report file.");
+		//std::cerr << "Error during writing of the report file." << std::endl;
 	}
 
 	return 0;
