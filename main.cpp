@@ -7,6 +7,7 @@
 #include <exception>
 #include <fstream>
 #include <iomanip> // put_time
+#include <iostream>
 #include <sstream> // stringstream
 #include <stdlib.h> // defines putenv in POSIX
 #include <string>
@@ -443,18 +444,23 @@ int main(int argc, char ** argv)
 
 	if(!config.IsValid())
 	{
-		throw std::runtime_error("The given configuration is invalid.");
+		//throw std::runtime_error("The given configuration is invalid.");
+		std::cerr << "The given configuration is invalid." << std::endl;
+
+		return 0;
 	}
 
 	auto data = FetchData(config);
 	if(config.WriteToArchive() && !WriteArchive(config, data))
 	{
-		throw std::runtime_error("Error during archiving, check your config file.");
+		//throw std::runtime_error("Error during archiving, check your config file.");
+		std::cerr << "Error during archiving, check your config file." << std::endl;
 	}
 
 	if(config.WriteReport() && !WriteArchive(config, data))
 	{
-		throw std::runtime_error("Error during writing of the report file.");
+		//throw std::runtime_error("Error during writing of the report file.");
+		std::cerr << "Error during writing of the report file." << std::endl;
 	}
 
 	return 0;
