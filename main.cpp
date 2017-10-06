@@ -367,11 +367,13 @@ bool WriteArchive(const Configuration & config,
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
 		if(data.IsValid())
 		{
-			archiveOut << ' ' << data.currentPower << ' ' << data.powerToday << std::endl;
+			archiveOut << std::setw(5) << data.currentPower;
+			archiveOut << std::setw(3) << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
 		{
-			archiveOut << ' ' << 0 << ' ' << 0.0 << std::endl;
+			archiveOut << std::setw(5) << 0;
+			archiveOut << std::setw(3) << 0.0 << std::endl;
 		}
 
 		archiveOut.close();
@@ -422,12 +424,13 @@ bool WriteReport(const Configuration & config,
 	{
 		if(data.IsValid())
 		{
-			reportFileOut << isotime << data.currentPower << ' ';
-			reportFileOut << data.powerToday << std::endl;
+			reportFileOut << isotime << std::setw(5) << data.currentPower;
+			reportFileOut << std::setw(3) << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
 		{
-			reportFileOut << isotime << ' ' << 0 << ' ' << 0.0 << std::endl;
+			reportFileOut << isotime << std::setw(5) << 0 << std::setw(3);
+			reportFileOut << 0.0 << std::endl;
 		}
 
 		reportFileOut.close();
