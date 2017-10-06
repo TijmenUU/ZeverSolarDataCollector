@@ -336,6 +336,9 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 }
 
 // TODO Move into class
+const unsigned int cFormattingWidth = 6U; // width of power and kwh cols
+
+// TODO Move into class
 bool WriteArchive(const Configuration & config,
 	const ZeverData & data)
 {
@@ -367,13 +370,17 @@ bool WriteArchive(const Configuration & config,
 		archiveOut << GetTimeStr(now, "%H:%M:%S");
 		if(data.IsValid())
 		{
-			archiveOut << std::setw(5) << data.currentPower;
-			archiveOut << std::setw(3) << data.powerToday << std::endl;
+			archiveOut << std::setw(cFormattingWidth)
+				 << data.currentPower;
+			archiveOut << std::setw(cFormattingWidth)
+				 << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
 		{
-			archiveOut << std::setw(5) << 0;
-			archiveOut << std::setw(3) << 0.0 << std::endl;
+			archiveOut << std::setw(cFormattingWidth)
+				 << 0;
+			archiveOut << std::setw(cFormattingWidth)
+				 << 0.0 << std::endl;
 		}
 
 		archiveOut.close();
@@ -424,13 +431,15 @@ bool WriteReport(const Configuration & config,
 	{
 		if(data.IsValid())
 		{
-			reportFileOut << isotime << std::setw(5) << data.currentPower;
-			reportFileOut << std::setw(3) << data.powerToday << std::endl;
+			reportFileOut << isotime << std::setw(cFormattingWidth)
+				 << data.currentPower;
+			reportFileOut << std::setw(cFormattingWidth)
+				 << data.powerToday << std::endl;
 		}
 		else if(config.WriteOnFailure())
 		{
-			reportFileOut << isotime << std::setw(5) << 0 << std::setw(3);
-			reportFileOut << 0.0 << std::endl;
+			reportFileOut << isotime << std::setw(cFormattingWidth) << 0;
+			reportFileOut << std::setw(cFormattingWidth) << 0.0 << std::endl;
 		}
 
 		reportFileOut.close();
