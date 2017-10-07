@@ -178,11 +178,6 @@ function DrawTiles(startDate,
 	powerProduction,
 	lastCumProduction)
 {
-	console.log(startDate);
-	console.log(endDate);
-	console.log(powerProduction);
-	console.log(lastCumProduction);
-
 	if(powerProduction.length < 2)
 	{
 		document.getElementById('powerProductionStats').innerHTML = "Er is nog te weinig data verzameld.";
