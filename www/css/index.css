@@ -10,18 +10,17 @@
 
 .tile a:link {
 	color: #FDFEFE;
-	vertical-align: middle;
 }
 
 .tile a:visited {
 	color: #FBFCFC;
-	vertical-align: middle;
 }
 
 .small-tile {
 	width: 100%;
 	height: 40px;
 	display: inline-block;
+   justify-content: center;
 	box-sizing: border-box;
 	text-align: center;
 	border: 2px solid white;

@@ -42,6 +42,10 @@ function ParseData(data)
 	var lines = data.split('\n');
 	for(var i = 0; i < lines.length; ++i)
 	{
+		if(lines[i].length == 0)
+		{
+			continue;
+		}
 		var values = lines[i].split(/\s+/);
 		if(values != null)
 		{
@@ -71,6 +75,9 @@ function ParseData(data)
 
 	DrawChart(dates, powerValues, cummulativeValues,
 		upperBoundPower, upperBoundCummulative);
+
+	DrawTiles(dates[0], dates[dates.length - 1],
+		powerValues, cummulativeValues[cummulativeValues.length - 1]);
 }
 
 function UpdateChartWidth()
@@ -164,4 +171,47 @@ function DrawChart(dateLabels,
 	Plotly.newPlot('chart', data, layout, {displayModeBar: false});
 
 	window.onresize = UpdateChartWidth;
+}
+
+function DrawTiles(startDate,
+	endDate,
+	powerProduction,
+	lastCumProduction)
+{
+	console.log(startDate);
+	console.log(endDate);
+	console.log(powerProduction);
+	console.log(lastCumProduction);
+
+	if(powerProduction.length < 2)
+	{
+		document.getElementById('powerProductionStats').innerHTML = "Er is nog te weinig data verzameld.";
+		document.getElementById('powerProduced').innerHTML = "Er is nog te weinig data verzameld.";
+		document.getElementById('activityStats').innerHTML = "Er is nog te weinig data verzameld.";
+		return;
+	}
+
+	var cumPower = 0;
+	var powerLow = MaxSolarPowerWatts;
+	var powerHigh = 0;
+	for(var i = 0; i < powerProduction.length; ++i)
+	{
+		cumPower += powerProduction[i];
+		if(powerProduction[i] < powerLow)
+		{
+			powerLow = powerProduction[i];
+		}
+		else if(powerProduction[i] > powerHigh)
+		{
+			powerHigh = powerProduction[i];
+		}
+	}
+	cumPower /= powerProduction.length;
+
+	document.getElementById('powerProductionStats').innerHTML = "Momenteel al " + lastCumProduction + " Kilowatt/uur opgewekt.";
+
+	document.getElementById('powerProduced').innerHTML = "Gemiddeld genomen " + Math.round(cumPower) + " watt met een laagtepunt van " + powerLow + " watt en een piek van " + powerHigh +" watt.";
+
+	var dateformat = "HH:mm:ss";
+	document.getElementById('activityStats').innerHTML = "Actief sinds " + moment(startDate).format(dateformat) + " tot en met " + moment(endDate).format(dateformat) + ".";
 }
