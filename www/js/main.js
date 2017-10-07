@@ -28,7 +28,10 @@ function LoadFile()
 
 function DisplayError()
 {
-
+	alert("De zonnepanelen data kon niet worden opgehaald, is alles wel goed met de server?");
+	document.getElementById("chart-col").innerHTML = "De server kon de data niet vinden. Staat alles daar wel goed ingesteld?";
+	DrawTiles(null, null, [], null);
+	InitDownloads([], [], []);
 }
 
 function ParseData(data)
@@ -78,6 +81,8 @@ function ParseData(data)
 
 	DrawTiles(dates[0], dates[dates.length - 1],
 		powerValues, cummulativeValues[cummulativeValues.length - 1]);
+
+	InitDownloads(dates, powerValues, cummulativeValues);
 }
 
 function UpdateChartWidth()
@@ -208,4 +213,24 @@ function DrawTiles(startDate,
 	document.getElementById('powerProduced').innerHTML = "Gemiddeld genomen " + Math.round(cumPower) + " watt met een laagtepunt van " + powerLow + " watt en een piek van " + powerHigh +" watt.";
 
 	document.getElementById('activityStats').innerHTML = "Actief sinds " + moment(startDate).format("HH:mm") + " tot en met " + moment(endDate).format("HH:mm") + ".";
+}
+
+function InitDownloads(dates, powerValues, cummulativeValues)
+{
+	if(dates.length < 1)
+	{
+		return;
+	}
+
+	const lineEnd = '\r\n';
+	const csvSeperator = ',';
+	var csvStr = "tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur" + lineEnd;
+	for(var i = 0; i < dates.length; ++i)
+	{
+		csvStr += dates[i] + csvSeperator + powerValues[i] + csvSeperator + cummulativeValues[i] + lineEnd;
+	}
+
+	var downloadButton = document.getElementById('csvDownload');
+	downloadButton.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvStr));
+	downloadButton.setAttribute('download', moment(dates[0]).format("YYYY_MM_DD[.csv]"))
 }
