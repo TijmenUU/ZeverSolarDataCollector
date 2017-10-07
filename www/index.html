@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<title>Zonnepanelen Overzicht</title>
+		<title>SolarPi</title>
 		<script src="js/jquery.min.js"></script>
 		<script src="js/plotly.min.js"></script>
 		<script src="js/moment.min.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+		<link rel="stylesheet" type="text/css" href="css/index.css">
 	</head>
 <body>
 	<div class="container">
@@ -17,18 +18,52 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<p style="text-align: center;">tile 1</p>
+				<div class="tile green">
+					<h3 class="title">Productie</h3>
+					<p id="powerProductionStats"></p>
+				</div>
 			</div>
 			<div class="col">
-				<p style="text-align: center;">tile 2</p>
+				<div class="tile orange">
+					<h3 class="title">Opbrengst</h3>
+					<p id="powerProduced"></p>
+				</div>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col">
-				<p style="text-align: center;">tile 3</p>
+				<div class="tile blue">
+					<h3 class="title">Activiteit</h3>
+					<p id="activityStats"></p>
+				</div>
 			</div>
 			<div class="col">
-				<p style="text-align: center;">tile 4</p>
+				<div class="tile red">
+					<h3 class="title">Download</h3>
+					<div class="row">
+						<div class="col">
+							<a id="csvDownload" href="#">
+								<div class="small-tile">
+									<p>CSV</p>
+								</div>
+							</a>
+						</div>
+						<div class="col">
+							<a id="xmlDownload" href="#">
+								<div class="small-tile">
+									<p>XML</p>
+								</div>
+							</a>
+						</div>
+						<div class="col">
+							<a id="rawDownload" href="#">
+								<div class="small-tile">
+									<p>TXT</p>
+								</div>
+							</a>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

@@ -96,7 +96,7 @@ function DrawChart(dateLabels,
 		line:
 		{
 			shape: 'linear',
-			color: '#F4D03F',
+			color: '#2ECC71',
 		},
 		type: 'scatter',
 		connectgaps: true
@@ -109,7 +109,7 @@ function DrawChart(dateLabels,
 		line:
 		{
 			shape: 'spline',
-			color: '#58D68D',
+			color: '#F39C12',
 		},
 		type: 'scatter',
 		connectgaps: true,
@@ -138,7 +138,8 @@ function DrawChart(dateLabels,
 		{
 			title: 'Momentopname (Watt)',
 			range: [0, upperBoundPower],
-			fixedrange: true
+			fixedrange: true,
+			showgrid: true,
 		},
 		yaxis2:
 		{
@@ -146,7 +147,8 @@ function DrawChart(dateLabels,
 			range: [0, upperBoundCummulative],
 			fixedrange: true,
 			overlaying: 'y',
-			side: 'right'
+			side: 'right',
+			showgrid: false,
 		},
 		legend:
 		{

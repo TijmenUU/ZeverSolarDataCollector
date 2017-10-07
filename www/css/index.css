@@ -1,0 +1,53 @@
+.tile {
+	width: 100%;
+	height: 120px;
+	display: inline-block;
+	box-sizing: border-box;
+	background-color: #FFFFFF;
+	padding: 20px;
+	margin-bottom: 30px;
+}
+
+.tile a:link {
+	color: #FDFEFE;
+	vertical-align: middle;
+}
+
+.tile a:visited {
+	color: #FBFCFC;
+	vertical-align: middle;
+}
+
+.small-tile {
+	width: 100%;
+	height: 40px;
+	display: inline-block;
+	box-sizing: border-box;
+	text-align: center;
+	border: 2px solid white;
+	padding: 5px;
+}
+
+.title {
+	margin-top: 0px;
+}
+
+.red {
+	color: #FFFFFF;
+	background-color: #E74C3C;
+}
+
+.green {
+	color: #FFFFFF;
+	background-color: #2ECC71;
+}
+
+.blue {
+	color: #FFFFFF;
+	background-color: #3498DB;
+}
+
+.orange {
+	color: #FFFFFF;
+	background-color: #F39C12;
+}
