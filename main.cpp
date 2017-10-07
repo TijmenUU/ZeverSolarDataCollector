@@ -363,7 +363,7 @@ bool WriteArchive(const Configuration & config,
 		config.ArchivearchiveFileExtension();
 
 	std::ofstream archiveOut;
-	archiveOut.open(storagePath, 
+	archiveOut.open(storagePath,
 		std::fstream::out | std::fstream::app);
 	if(archiveOut.is_open())
 	{
@@ -396,7 +396,7 @@ bool WriteReport(const Configuration & config,
 	const ZeverData & data)
 {
 	const std::time_t now = time(0);
-	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%SZ");
+	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%S");
 
 	umask(0); // set mask for file creation
 	std::ofstream reportFileOut;
