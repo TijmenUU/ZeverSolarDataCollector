@@ -133,5 +133,5 @@ function DrawChart(dateLabels, powerProduction, cummulativeProduction)
 
 	Plotly.newPlot('chart', data, layout, {displayModeBar: false});
 
-	window.onresize = function() { Plotly.Plots.resize(gd) };
+	//window.onresize = function() { Plotly.Plots.resize(gd) };
 }
