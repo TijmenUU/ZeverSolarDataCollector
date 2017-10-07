@@ -3,14 +3,38 @@
 	<head>
 		<title>Zonnepanelen Overzicht</title>
 		<script src="js/jquery.min.js"></script>
-		<script src="js/popper.min.js"></script>
-		<script src="js/bootstrap.min.js"></script>
 		<script src="js/plotly.min.js"></script>
-		<script src="js/main.js"></script>
+		<script src="js/moment.min.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	</head>
 <body>
-	<div id="chart" style="width:600px;height:800px;"></div>
+	<div class="container">
+		<div class="row">
+			<div class="col" id="chart-col">
+				<div id="chart"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<p style="text-align: center;">tile 1</p>
+			</div>
+			<div class="col">
+				<p style="text-align: center;">tile 2</p>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col">
+				<p style="text-align: center;">tile 3</p>
+			</div>
+			<div class="col">
+				<p style="text-align: center;">tile 4</p>
+			</div>
+		</div>
+	</div>
+	<!--These are loaded later due depending on the body div's existing-->
+	<script src="js/popper.min.js"></script> <!-- Respect the load order -->
+	<script src="js/bootstrap.min.js"></script>
+	<script src="js/main.js"></script>
 </body>
 </html>

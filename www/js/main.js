@@ -1,6 +1,9 @@
-window.onload = LoadFile();
+"use strict";
 
 var MaxSolarPowerWatts = 3000;
+var TodayData = '/rsc/dayresults.txt';
+
+window.onload = LoadFile();
 
 function LoadFile()
 {
@@ -19,7 +22,7 @@ function LoadFile()
 		}
 	};
 
-	xhr.open("GET", "/rsc/dayresults.txt", true);
+	xhr.open("GET", TodayData, true);
 	xhr.send();
 }
 
@@ -28,16 +31,16 @@ function DisplayError()
 
 }
 
-var upperBoundPower = 10;
-var upperBoundCummulative = 10;
-var powerValues = [];
-var cummulativeValues = [];
-var dates = [];
-
 function ParseData(data)
 {
+	var powerValues = [];
+	var cummulativeValues = [];
+	var dates = [];
+	var upperBoundPower = 10;
+	var upperBoundCummulative = 10;
+
 	var lines = data.split('\n');
-	for(i = 0; i < lines.length; ++i)
+	for(var i = 0; i < lines.length; ++i)
 	{
 		var values = lines[i].split(/\s+/);
 		if(values != null)
@@ -66,10 +69,25 @@ function ParseData(data)
 	upperBoundPower += 10;
 	upperBoundCummulative += 1;
 
-	DrawChart(dates, powerValues, cummulativeValues);
+	DrawChart(dates, powerValues, cummulativeValues,
+		upperBoundPower, upperBoundCummulative);
 }
 
-function DrawChart(dateLabels, powerProduction, cummulativeProduction)
+function UpdateChartWidth()
+{
+	var newWidth = parseInt($("#chart-col").css("width"));
+	var existingPlot = document.getElementById('chart');
+	if(existingPlot.layout.width != newWidth)
+	{
+		Plotly.relayout('chart', { width: newWidth /*, legend: { x: GetLegendPosX(newWidth) }*/ });
+	}
+}
+
+function DrawChart(dateLabels,
+	powerProduction,
+	cummulativeProduction,
+	upperBoundPower,
+	upperBoundCummulative)
 {
 	var trace1 = {
 		x: dateLabels,
@@ -98,40 +116,50 @@ function DrawChart(dateLabels, powerProduction, cummulativeProduction)
 		yaxis: 'y2',
 	};
 
-	var data = [trace1, trace2];
+	var width = parseInt($("#chart-col").css("width"));
+	var height = 600;
 
 	var layout = {
-		title: 'Zonnepanelen Opbrengst',
+		title: 'Overzicht' + moment().format(" D MMMM, YYYY"),
 		titlefont:
 		{
 			//family: 'Courier New, monospace',
 			size: 36,
 			//color: '#7f7f7f'
 		},
-		height: 600,
-		width: 800,
+		width: width,
+		height: height,
+		xaxis:
+		{
+			fixedrange: true,
+			//dtick: 20,
+		},
 		yaxis:
 		{
 			title: 'Momentopname (Watt)',
-			range: [0, upperBoundPower]
+			range: [0, upperBoundPower],
+			fixedrange: true
 		},
 		yaxis2:
 		{
 			title: 'Dagopbrengst Cummulatief (KWh)',
 			range: [0, upperBoundCummulative],
+			fixedrange: true,
 			overlaying: 'y',
 			side: 'right'
 		},
 		legend:
 		{
 			orientation: "v",
-			x: 1.05,
+			x: 1,
 			xanchor: 'left',
 			y: 1,
 		},
 	};
 
+	var data = [trace1, trace2];
+
 	Plotly.newPlot('chart', data, layout, {displayModeBar: false});
 
-	//window.onresize = function() { Plotly.Plots.resize(gd) };
+	window.onresize = UpdateChartWidth;
 }
