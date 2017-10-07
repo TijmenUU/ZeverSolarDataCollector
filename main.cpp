@@ -348,7 +348,7 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 }
 
 // TODO Move into class (all)
-const unsigned int cFilePermissions = 0764;
+const unsigned int cFilePermissions = 0765;
 
 // TODO move into class
 // Helper method
