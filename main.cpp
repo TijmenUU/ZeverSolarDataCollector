@@ -20,8 +20,22 @@ const std::string cConfigFile = "collecting.conf";
 // Settings
 const char cCommentSymbol = '#';
 
-const std::array<const std::string, 7> cConfigurationTags = {
+enum class ConfigurationTag
+{
+	UNKNOWN = -1,
+	FETCHURL,
+	FETCHTIMEOUT,
+	WRITEARCHIVE,
+	WRITEZERO,
+	ARCHIVELOCATION,
+	ARCHIVEFILEEXTENSION,
+	WRITEREPORT,
+	REPORTLOCATION
+};
+
+const std::array<const std::string, 8> cConfigurationTags = {
 	"fetchURL",
+	"fetchTimeout",
 	"writeArchive",
 	"writeZeroOnFailedFetch",
 	"archiveLocation",
@@ -38,22 +52,11 @@ const std::array<const std::string, 4> cConfigurationBinaryValues = {
 	"n"
 };
 
-enum class ConfigurationTag
-{
-	UNKNOWN = -1,
-	FETCHURL,
-	WRITEARCHIVE,
-	WRITEZERO,
-	ARCHIVELOCATION,
-	ARCHIVEFILEEXTENSION,
-	WRITEREPORT,
-	REPORTLOCATION
-};
-
 class Configuration
 {
 protected:
 	std::string fetchURL;
+	unsigned int fetchTimeoutMs;
 	bool writeToArchive;
 	bool writeOnFailure;
 	std::string archiveDirectory;
@@ -148,6 +151,10 @@ public:
 						fetchURL = valuestr;
 						break;
 
+						case ConfigurationTag::FETCHTIMEOUT:
+						fetchTimeoutMs = std::stoul(valuestr);
+						break;
+
 						case ConfigurationTag::WRITEARCHIVE:
 						writeToArchive = GetBinaryValue(valuestr);
 						break;
@@ -195,6 +202,7 @@ public:
 	// Getters
 	bool IsValid() const { return isValid; }
 	std::string URLtoFetch() const { return fetchURL; }
+	unsigned int FetchTimeoutInMs() const { return fetchTimeoutMs; }
 	bool WriteArchive() const { return writeToArchive; }
 	bool WriteOnFailure() const { return writeOnFailure; }
 	std::string ArchiveStorageLocation() const { return archiveDirectory; }
@@ -203,7 +211,8 @@ public:
 	std::string ReportFileLocation() const { return reportFile; }
 
 	Configuration()
-	: writeToArchive(false),
+	: fetchTimeoutMs(5000),
+	writeToArchive(false),
 	writeOnFailure(false),
 	writeReport(false),
 	isValid(false)
@@ -211,7 +220,8 @@ public:
 	}
 
 	Configuration(const std::string & configurationFile)
-	: writeToArchive(false),
+	: fetchTimeoutMs(5000),
+	writeToArchive(false),
 	writeOnFailure(false),
 	writeReport(false),
 	isValid(false)
@@ -303,6 +313,8 @@ ZeverData FetchData(const Configuration & config)
 	std::string buffer;
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_to_string);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, &buffer);
+
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT_MS, config.FetchTimeoutInMs());
 
 	curl_easy_setopt(curl, CURLOPT_URL, config.URLtoFetch().c_str());
 
