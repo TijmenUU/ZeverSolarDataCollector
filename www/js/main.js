@@ -9,14 +9,24 @@ const chartTitle = 'Overzicht'; // Overview
 const yaxis1Title = 'Momentopname'; // Production Snapshot
 const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
 const tileNoDataMsg = 'Er is nog te weinig data verzameld.'; // Not enough data
-const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald, is alles wel goed met de server?'; // Data could not be fetched, is the server OK?
+const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald van:'; // Data could not be fetched from:
 const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
 window.onload = LoadFile();
 
-function LoadFile()
+function LoadFile(file)
 {
+	var path;
+	if(file == undefined || file == null || file.length == 0)
+	{
+		path = dataDir + todayFile;
+	}
+	else
+	{
+		path = dataDir + file;
+	}
+
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4) {
@@ -27,18 +37,18 @@ function LoadFile()
 			}
 			else {
 				// ***No, tell the callback the call failed***
-				DisplayError();
+				DisplayError(path);
 			}
 		}
 	};
 
-	xhr.open("GET", dataDir + todayFile, true);
+	xhr.open("GET", path, true);
 	xhr.send();
 }
 
-function DisplayError()
+function DisplayError(getRequestPath)
 {
-	alert(alertNoDataMsg);
+	alert(alertNoDataMsg + getRequestPath);
 	document.getElementById("chart-col").innerHTML = chartNoDataMsg;
 	DrawTiles(null, null, [], null);
 	InitDownloads([], [], []);
