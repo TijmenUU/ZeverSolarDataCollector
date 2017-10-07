@@ -1,7 +1,16 @@
 "use strict";
 
-var MaxSolarPowerWatts = 3000;
-var TodayData = '/rsc/dayresults.txt';
+const MaxSolarPowerWatts = 3000;
+const TodayData = '/rsc/dayresults.txt';
+const chartHeight = 600; // in px
+/* Strings */
+const chartTitle = 'Overzicht'; // Overview
+const yaxis1Title = 'Momentopname'; // Production Snapshot
+const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
+const tileNoDataMsg = 'Er is nog te weinig data verzameld.'; // Not enough data
+const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald, is alles wel goed met de server?'; // Data could not be fetched, is the server OK?
+const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
+const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
 window.onload = LoadFile();
 
@@ -28,8 +37,8 @@ function LoadFile()
 
 function DisplayError()
 {
-	alert("De zonnepanelen data kon niet worden opgehaald, is alles wel goed met de server?");
-	document.getElementById("chart-col").innerHTML = "De server kon de data niet vinden. Staat alles daar wel goed ingesteld?";
+	alert(alertNoDataMsg);
+	document.getElementById("chart-col").innerHTML = chartNoDataMsg;
 	DrawTiles(null, null, [], null);
 	InitDownloads([], [], []);
 }
@@ -60,7 +69,7 @@ function ParseData(data)
 			}
 			powerValues.push(powerValue);
 			cummulativeValues.push(cummulativeValue);
-			dates.push(values[0].slice(0, -1)); // FIX Z in ISO NOTATION
+			dates.push(values[0]);
 
 			if(powerValue > upperBoundPower)
 			{
@@ -129,10 +138,9 @@ function DrawChart(dateLabels,
 	};
 
 	var width = parseInt($("#chart-col").css("width"));
-	var height = 600;
 
 	var layout = {
-		title: 'Overzicht' + moment().format(" D MMMM, YYYY"),
+		title: chartTitle + moment(dateLabels[0]).format(" D MMMM, YYYY"),
 		titlefont:
 		{
 			//family: 'Courier New, monospace',
@@ -140,7 +148,7 @@ function DrawChart(dateLabels,
 			//color: '#7f7f7f'
 		},
 		width: width,
-		height: height,
+		height: chartHeight,
 		xaxis:
 		{
 			fixedrange: true,
@@ -148,14 +156,14 @@ function DrawChart(dateLabels,
 		},
 		yaxis:
 		{
-			title: 'Momentopname (Watt)',
+			title: yaxis1Title + ' (Watt)',
 			range: [0, upperBoundPower],
 			fixedrange: true,
 			showgrid: true,
 		},
 		yaxis2:
 		{
-			title: 'Dagopbrengst Cummulatief (KWh)',
+			title: yaxis2Title + ' (KWh)',
 			range: [0, upperBoundCummulative],
 			fixedrange: true,
 			overlaying: 'y',
@@ -185,9 +193,9 @@ function DrawTiles(startDate,
 {
 	if(powerProduction.length < 2)
 	{
-		document.getElementById('powerProductionStats').innerHTML = "Er is nog te weinig data verzameld.";
-		document.getElementById('powerProduced').innerHTML = "Er is nog te weinig data verzameld.";
-		document.getElementById('activityStats').innerHTML = "Er is nog te weinig data verzameld.";
+		document.getElementById('powerProductionStats').innerHTML = tileNoDataMsg;
+		document.getElementById('powerProduced').innerHTML = tileNoDataMsg;
+		document.getElementById('activityStats').innerHTML = tileNoDataMsg;
 		return;
 	}
 
@@ -208,6 +216,7 @@ function DrawTiles(startDate,
 	}
 	cumPower /= powerProduction.length;
 
+	// Get some workable solution here for locale (string format)
 	document.getElementById('powerProductionStats').innerHTML = "Momenteel al " + lastCumProduction + " Kilowatt/uur opgewekt.";
 
 	document.getElementById('powerProduced').innerHTML = "Gemiddeld genomen " + Math.round(cumPower) + " watt met een laagtepunt van " + powerLow + " watt en een piek van " + powerHigh +" watt.";
@@ -224,7 +233,7 @@ function InitDownloads(dates, powerValues, cummulativeValues)
 
 	const lineEnd = '\r\n';
 	const csvSeperator = ',';
-	var csvStr = "tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur" + lineEnd;
+	var csvStr = cvsHeader + lineEnd;
 	for(var i = 0; i < dates.length; ++i)
 	{
 		csvStr += dates[i] + csvSeperator + powerValues[i] + csvSeperator + cummulativeValues[i] + lineEnd;
