@@ -57,7 +57,7 @@ function ParseData(data)
 			}
 			powerValues.push(powerValue);
 			cummulativeValues.push(cummulativeValue);
-			dates.push(values[0]);
+			dates.push(values[0].slice(0, -1)); // FIX Z in ISO NOTATION
 
 			if(powerValue > upperBoundPower)
 			{
@@ -207,6 +207,5 @@ function DrawTiles(startDate,
 
 	document.getElementById('powerProduced').innerHTML = "Gemiddeld genomen " + Math.round(cumPower) + " watt met een laagtepunt van " + powerLow + " watt en een piek van " + powerHigh +" watt.";
 
-	var dateformat = "HH:mm:ss";
-	document.getElementById('activityStats').innerHTML = "Actief sinds " + moment(startDate).format(dateformat) + " tot en met " + moment(endDate).format(dateformat) + ".";
+	document.getElementById('activityStats').innerHTML = "Actief sinds " + moment(startDate).format("HH:mm") + " tot en met " + moment(endDate).format("HH:mm") + ".";
 }
