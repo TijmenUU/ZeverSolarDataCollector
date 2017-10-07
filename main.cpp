@@ -347,8 +347,32 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 	return result;
 }
 
-// TODO Move into class
-const unsigned int cFormattingWidth = 6U; // width of power and kwh cols
+// TODO Move into class (all)
+const unsigned int cFilePermissions = 0764;
+
+// TODO move into class
+// Helper method
+void WriteLine(std::ostream & outputStream,
+	const std::time_t & now,
+	const ZeverData & data,
+	const Configuration & config)
+{
+	const unsigned int cFormattingWidth = 6U;
+	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%S");
+
+	if(data.IsValid())
+	{
+		outputStream << isotime << std::setw(cFormattingWidth)
+			 << data.currentPower;
+		outputStream << std::setw(cFormattingWidth)
+			 << data.powerToday << std::endl;
+	}
+	else if(config.WriteOnFailure())
+	{
+		outputStream << isotime << std::setw(cFormattingWidth) << 0;
+		outputStream << std::setw(cFormattingWidth) << 0.0 << std::endl;
+	}
+}
 
 // TODO Move into class
 bool WriteArchive(const Configuration & config,
@@ -363,7 +387,7 @@ bool WriteArchive(const Configuration & config,
 	struct stat st = {0};
 	if(stat(subfolder.c_str(), &st) != 0) // does it exist?
 	{
-		if(mkdir(subfolder.c_str(), 0777) != 0) // no, create it
+		if(mkdir(subfolder.c_str(), cFilePermissions) != 0) // no, create it
 		{
 			return false; // cannot create subfolder, abort
 		}
@@ -379,21 +403,7 @@ bool WriteArchive(const Configuration & config,
 		std::fstream::out | std::fstream::app);
 	if(archiveOut.is_open())
 	{
-		archiveOut << GetTimeStr(now, "%H:%M:%S");
-		if(data.IsValid())
-		{
-			archiveOut << std::setw(cFormattingWidth)
-				 << data.currentPower;
-			archiveOut << std::setw(cFormattingWidth)
-				 << data.powerToday << std::endl;
-		}
-		else if(config.WriteOnFailure())
-		{
-			archiveOut << std::setw(cFormattingWidth)
-				 << 0;
-			archiveOut << std::setw(cFormattingWidth)
-				 << 0.0 << std::endl;
-		}
+		WriteLine(archiveOut, now, data, config);
 
 		archiveOut.close();
 
@@ -441,18 +451,7 @@ bool WriteReport(const Configuration & config,
 
 	if(reportFileOut.is_open())
 	{
-		if(data.IsValid())
-		{
-			reportFileOut << isotime << std::setw(cFormattingWidth)
-				 << data.currentPower;
-			reportFileOut << std::setw(cFormattingWidth)
-				 << data.powerToday << std::endl;
-		}
-		else if(config.WriteOnFailure())
-		{
-			reportFileOut << isotime << std::setw(cFormattingWidth) << 0;
-			reportFileOut << std::setw(cFormattingWidth) << 0.0 << std::endl;
-		}
+		WriteLine(reportFileOut, now, data, config);
 
 		reportFileOut.close();
 
