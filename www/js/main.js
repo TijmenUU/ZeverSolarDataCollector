@@ -1,7 +1,8 @@
 "use strict";
 
 const MaxSolarPowerWatts = 3000;
-const TodayData = '/rsc/dayresults.txt';
+const dataDir = '/solarpanel/';
+const todayFile = 'dayresults.txt';
 const chartHeight = 600; // in px
 /* Strings */
 const chartTitle = 'Overzicht'; // Overview
@@ -31,7 +32,7 @@ function LoadFile()
 		}
 	};
 
-	xhr.open("GET", TodayData, true);
+	xhr.open("GET", dataDir + todayFile, true);
 	xhr.send();
 }
 
