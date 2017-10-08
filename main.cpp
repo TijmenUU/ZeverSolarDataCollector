@@ -1,15 +1,21 @@
+// stl
 #include <algorithm> // find, transform, tolower
 #include <array>
 #include <ctime>
 #include <exception>
 #include <fstream>
 #include <iomanip> // skipws
-#include <curl/curl.h> // tested with libcurl4-openSSH
 #include <sstream> // stringstream
 #include <string>
-#include <sys/types.h> // include before stat.h
-#include <sys/stat.h>
 #include <vector>
+
+// linux
+#include <sys/types.h> // include before stat.h
+#include <sys/stat.h> // stat
+#include <fcntl.h> // open
+
+// 3rd party
+#include <curl/curl.h> // tested with libcurl4-openSSH
 
 /* CONFIGURATION FILE */
 
@@ -333,7 +339,7 @@ ZeverData FetchData(const Configuration & config)
 
 // TODO Move into class
 // Helper method. Limited to 64 char length strings for now.
-std::string GetTimeStr(const std::time_t & _time, const char * format)
+inline std::string GetTimeStr(const std::time_t & _time, const char * format)
 {
 	const size_t strBufferSize = 64U;
 
@@ -347,11 +353,51 @@ std::string GetTimeStr(const std::time_t & _time, const char * format)
 	return result;
 }
 
-// TODO Move into class (all)
-const unsigned int cFilePermissions = 0755;
+// TODO move into class
+// Helper method
+// Returns whether a file OR directory exists
+inline bool FileExists(const char * filepath)
+{
+	struct stat st = {0};
+	if(stat(filepath, &st) != 0)
+	{
+		return false;
+	}
+	return true;
+}
 
 // TODO move into class
 // Helper method
+// Creates a directory in the given location with default permissions 0644
+inline bool CreateDirectory(const char * dirpath, const unsigned int dirPerm = 0755)
+{
+	if(mkdir(subfolder.c_str(), cDirectoryPermissions) != 0)
+	{
+		return false;
+	}
+	return true;
+}
+
+// TODO move into class
+// Helper method
+// Creates the file specified with default permissions 0644
+inline bool CreateFile(const char * filePath, const unsigned int filePerm = 0644)
+{
+	auto fileDescriptor = open(filePath,
+		O_WRONLY | O_CREAT, filePerm);
+	if(fileDescriptor == -1)
+	{
+		return false;
+	}
+
+	close(fileDescriptor);
+	return true;
+}
+
+// TODO move into class
+// Helper method
+// Writes the datetime, currentPower and powerToday to the file stream
+// followed by a line ending. Uses config to check if it should write 0s.
 void WriteLine(std::ostream & outputStream,
 	const std::time_t & now,
 	const ZeverData & data,
@@ -375,6 +421,9 @@ void WriteLine(std::ostream & outputStream,
 }
 
 // TODO Move into class
+// Creates the file and subdirectory if necessary. Files are created in a
+// subdirectory matching the year (YYYY) and the files have the month_day
+// format (MM_DD).
 bool WriteArchive(const Configuration & config,
 	const ZeverData & data)
 {
@@ -383,13 +432,11 @@ bool WriteArchive(const Configuration & config,
 		GetTimeStr(now, "%Y");
 	const std::string fileName = GetTimeStr(now, "%m_%d");
 
-	umask(0); // set mask for file creation
-	struct stat st = {0};
-	if(stat(subfolder.c_str(), &st) != 0) // does it exist?
+	if(!FileExists(subfolder.c_str()))
 	{
-		if(mkdir(subfolder.c_str(), cFilePermissions) != 0) // no, create it
+		if(!CreateDirectory(subfolder.c_str()))
 		{
-			return false; // cannot create subfolder, abort
+			return false;
 		}
 	}
 
@@ -398,9 +445,16 @@ bool WriteArchive(const Configuration & config,
 		fileName +
 		config.ArchivearchiveFileExtension();
 
+	if(!FileExists(storagePath.c_str()))
+	{
+		if(!CreateFile(storagePath.c_str()))
+		{
+			return false;
+		}
+	}
+
 	std::ofstream archiveOut;
-	archiveOut.open(storagePath,
-		std::fstream::out | std::fstream::app);
+	archiveOut.open(storagePath, std::fstream::out | std::fstream::app);
 	if(archiveOut.is_open())
 	{
 		WriteLine(archiveOut, now, data, config);
@@ -414,14 +468,25 @@ bool WriteArchive(const Configuration & config,
 }
 
 // TODO Move into class
+// Creates the file if it doesn't exist already. If the file exists and is not
+// empty it checks if the date is still the same. If the year, month and day
+// match it appends to the file. If it does not it empties the file and appends.
 bool WriteReport(const Configuration & config,
 	const ZeverData & data)
 {
 	const std::time_t now = time(0);
 	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%S");
 
-	umask(0); // set mask for file creation
 	std::ofstream reportFileOut;
+	auto reportFileLocation_cstr = config.ReportFileLocation().c_str();
+	if(!FileExists(reportFileLocation_cstr))
+	{
+		if(!CreateFile(reportFileLocation_cstr))
+		{
+			return false;
+		}
+	}
+
 	std::ifstream reportFileIn;
 	reportFileIn.open(config.ReportFileLocation());
 	if(reportFileIn.is_open() &&
@@ -461,7 +526,6 @@ bool WriteReport(const Configuration & config,
 	{
 		return false;
 	}
-
 }
 
 /* MAIN */
