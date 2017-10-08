@@ -3,6 +3,7 @@
 const MaxSolarPowerWatts = 3000;
 const dataDir = '/solarpanel/';
 const todayFile = 'dayresults.txt';
+const archiveFile = 'YYYY/MM_DD[.txt]';
 const chartHeight = 600; // in px
 /* Strings */
 const chartTitle = 'Overzicht'; // Overview
@@ -10,15 +11,74 @@ const yaxis1Title = 'Momentopname'; // Production Snapshot
 const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
 const tileNoDataMsg = 'Er is nog te weinig data verzameld.'; // Not enough data
 const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald van:'; // Data could not be fetched from:
+const alertTryNextDayFailMsg = "De data voor de volgende dag kon niet worden gevonden op de server.";
+const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden gevonden op de server.";
 const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
-window.onload = LoadFile();
+window.onload = LoadFile(todayFile, ParseData, DisplayError);
 
-function LoadFile(file)
+function FileExists(file)
+{
+	if(file === undefined || file === null || file.length == 0)
+	{
+		return false;
+	}
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("HEAD", dataDir + file, false);
+	xhr.send();
+
+	return xhr.status == 200;
+}
+
+function TryLoad()
+{
+	var date = document.getElementById('chartdate').value;
+
+	var file = moment(date).format(archiveFile);
+	if(FileExists(file))
+	{
+		LoadFile(file, ParseData, DisplayError);
+	}
+	else
+	{
+		alert("De data voor de datum " + date + " kon niet worden gevonden op de server.");
+	}
+}
+
+function TryPreviousDay()
+{
+	var date = moment(document.getElementById('chartdate').value);
+	var file = moment(date).subtract(1, 'day').format(archiveFile);
+	if(FileExists(file))
+	{
+		LoadFile(file, ParseData, DisplayError);
+	}
+	else
+	{
+		alert(alertTryPreviousDayFailMsg);
+	}
+}
+
+function TryNextDay()
+{
+	var date = moment(document.getElementById('chartdate').value);
+	var file = moment(date).add(1, 'day').format(archiveFile);
+	if(FileExists(file))
+	{
+		LoadFile(file, ParseData, DisplayError);
+	}
+	else
+	{
+		alert(alertTryNextDayFailMsg);
+	}
+}
+
+function LoadFile(file, successMethod, errorMethod)
 {
 	var path;
-	if(file == undefined || file == null || file.length == 0)
+	if(file === undefined || file === null || file.length == 0)
 	{
 		path = dataDir + todayFile;
 	}
@@ -33,11 +93,11 @@ function LoadFile(file)
 			// The request is done; did it work?
 			if (xhr.status == 200) {
 				// ***Yes, use `xhr.responseText` here***
-				ParseData(xhr.responseText);
+				successMethod(xhr.responseText);
 			}
 			else {
 				// ***No, tell the callback the call failed***
-				DisplayError(path);
+				errorMethod(path);
 			}
 		}
 	};
@@ -103,6 +163,8 @@ function ParseData(data)
 		powerValues, cummulativeValues[cummulativeValues.length - 1]);
 
 	InitDownloads(dates, powerValues, cummulativeValues);
+
+	UpdateDatePicker(dates[0]);
 }
 
 function UpdateChartWidth()
@@ -253,4 +315,13 @@ function InitDownloads(dates, powerValues, cummulativeValues)
 	var downloadButton = document.getElementById('csvDownload');
 	downloadButton.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvStr));
 	downloadButton.setAttribute('download', moment(dates[0]).format("YYYY_MM_DD[.csv]"))
+}
+
+function UpdateDatePicker(date)
+{
+	if(date === undefined || date === null)
+	{
+		document.getElementById('chartdate').value = moment().format("YYYY-MM-DD");
+	}
+	document.getElementById('chartdate').value = moment(date).format("YYYY-MM-DD");
 }

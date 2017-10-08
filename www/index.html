@@ -11,19 +11,39 @@
 	</head>
 <body>
 	<div class="container">
-		<div class="row">
+		<div class="row no-gutters">
 			<div class="col" id="chart-col">
 				<div id="chart"></div>
 			</div>
 		</div>
 		<div class="row no-gutters">
-			<div class="col leftcol">
+			<div class="col">
+				<button class="function-tile purple" onclick="TryPreviousDay()">
+					<img class="function-tile-img" src="/img/arrow_next.png"></img>
+				</button>
+			</div>
+			<div class="col">
+				<div class="function-tile purple">
+					<form class="function-tile-form">
+						<input class="function-tile-field" id="chartdate" type="date">
+						<button class="function-tile-btn" type="button" onclick="TryLoad()">Ga</button>
+					</form>
+				</div>
+			</div>
+			<div class="col">
+				<button class="function-tile purple" onclick="TryNextDay()">
+					<img class="function-tile-img" src="/img/arrow_previous.png"></img>
+				</button>
+			</div>
+		</div>
+		<div class="row no-gutters">
+			<div class="col">
 				<div class="tile green">
 					<h3 class="title">Productie</h3>
 					<p id="powerProductionStats"></p>
 				</div>
 			</div>
-			<div class="col rightcol">
+			<div class="col">
 				<div class="tile orange">
 					<h3 class="title">Opbrengst</h3>
 					<p id="powerProduced"></p>
@@ -31,13 +51,13 @@
 			</div>
 		</div>
 		<div class="row no-gutters">
-			<div class="col leftcol">
+			<div class="col">
 				<div class="tile blue">
 					<h3 class="title">Activiteit</h3>
 					<p id="activityStats"></p>
 				</div>
 			</div>
-			<div class="col rightcol">
+			<div class="col">
 				<div class="tile red">
 					<h3 class="title">Download</h3>
 					<div class="row">
