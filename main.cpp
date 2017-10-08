@@ -13,6 +13,7 @@
 #include <sys/types.h> // include before stat.h
 #include <sys/stat.h> // stat
 #include <fcntl.h> // open
+#include <unistd.h> // close
 
 // 3rd party
 #include <curl/curl.h> // tested with libcurl4-openSSH
@@ -371,7 +372,7 @@ inline bool FileExists(const char * filepath)
 // Creates a directory in the given location with default permissions 0644
 inline bool CreateDirectory(const char * dirpath, const unsigned int dirPerm = 0755)
 {
-	if(mkdir(subfolder.c_str(), cDirectoryPermissions) != 0)
+	if(mkdir(dirpath, dirPerm) != 0)
 	{
 		return false;
 	}
