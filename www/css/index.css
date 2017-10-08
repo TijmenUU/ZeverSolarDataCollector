@@ -31,13 +31,40 @@
 	padding: 5px;
 }
 
-.function-tile {
-	width: 100%;
-	height: 60px;
-	padding: 10px;
-	display: inline-block;
-	text-align: center;
-	border: 0px;
+/* Extra Small Devices, Phones */
+@media(min-width : 480px) {
+	.function-tile {
+		width: 100%;
+		height: 100px;
+		padding: 10px;
+		text-align: center;
+		border: 0px;
+	}
+
+	.function-tile-btn {
+		background-color: rgba(0,0,0,0);
+		color: #FFFFFF;
+		border: 2px solid white;
+		margin-top: 10px;
+	}
+}
+
+/* Small Devices, Tablets */
+@media(min-width : 996px) {
+	.function-tile {
+		width: 100%;
+		height: 60px;
+		padding: 10px;
+		text-align: center;
+		border: 0px;
+	}
+
+	.function-tile-btn {
+		background-color: rgba(0,0,0,0);
+		color: #FFFFFF;
+		border: 2px solid white;
+		margin: auto;
+	}
 }
 
 .function-tile-img {
@@ -46,19 +73,12 @@
 
 .function-tile-form {
 	padding-top: 5px;
-	margin: auto;
 }
 
 .function-tile-field {
 	border: 2px solid white;
 	background-color: rgba(0,0,0,0);
 	color: #FFFFFF;
-}
-
-.function-tile-btn {
-	background-color: rgba(0,0,0,0);
-	color: #FFFFFF;
-	border: 2px solid white;
 }
 
 .title {
