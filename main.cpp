@@ -369,7 +369,7 @@ inline bool FileExists(const char * filepath)
 
 // TODO move into class
 // Helper method
-// Creates a directory in the given location with default permissions 0644
+// Creates a directory in the given location with default permissions 0755
 inline bool CreateDirectory(const char * dirpath, const unsigned int dirPerm = 0755)
 {
 	if(mkdir(dirpath, dirPerm) != 0)
@@ -478,7 +478,6 @@ bool WriteReport(const Configuration & config,
 	const std::time_t now = time(0);
 	const std::string isotime = GetTimeStr(now,"%Y-%m-%dT%H:%M:%S");
 
-	std::ofstream reportFileOut;
 	auto reportFileLocation_cstr = config.ReportFileLocation().c_str();
 	if(!FileExists(reportFileLocation_cstr))
 	{
@@ -488,6 +487,7 @@ bool WriteReport(const Configuration & config,
 		}
 	}
 
+	std::ofstream reportFileOut;
 	std::ifstream reportFileIn;
 	reportFileIn.open(config.ReportFileLocation());
 	if(reportFileIn.is_open() &&
@@ -495,10 +495,9 @@ bool WriteReport(const Configuration & config,
 	{
 		std::string previousEntry;
 		std::getline(reportFileIn, previousEntry);
-		const std::string date = isotime.substr(0, 10);
+		const std::string date = isotime.substr(0, 10); // Does the date match?
 		if(date.compare(0, date.size(), previousEntry, 0, date.size()) == 0)
 		{
-			// the file is up to date
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::app); // append to the file
@@ -506,13 +505,14 @@ bool WriteReport(const Configuration & config,
 		else
 		{
 			reportFileIn.close();
-			reportFileOut.open(config.ReportFileLocation()); // overwrite file
+			reportFileOut.open(config.ReportFileLocation(),
+				std::fstream::out | std::fstream::trunc); // overwrite file
 		}
 	}
 	else
 	{
 		reportFileOut.open(config.ReportFileLocation(),
-			std::fstream::out | std::fstream::trunc); // create file or truncate
+			std::fstream::out | std::fstream::trunc); // overwrite file
 	}
 
 	if(reportFileOut.is_open())
