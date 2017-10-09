@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <array>
+#include <fstream>
 #include <sstream>
 
 // Settings
@@ -68,7 +69,7 @@ bool GetBinaryValue(std::string valuestr)
 	}
 }
 
-bool Configuration::Validate() const
+bool Configuration::Validate()
 {
 	if(fetchURL.size() == 0)
 	{
@@ -77,7 +78,7 @@ bool Configuration::Validate() const
 	}
 	if(archiveDirectory.size() == 0)
 	{
-		errorMsg = "Missing archive path in configuration file."
+		errorMsg = "Missing archive path in configuration file.";
 		return false;
 	}
 	return true;
@@ -143,6 +144,7 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 	}
 	else
 	{
+		errorMsg = "Could not open configuration file " + fileLocation;
 		return false;
 	}
 
@@ -152,31 +154,27 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 
 std::string Configuration::GetArchiveDirectory(const std::time_t & timestamp) const
 {
-	return archiveDirectory + GetFormattedTimeStr(now, "%Y");
+	return archiveDirectory + GetFormattedTimeStr(timestamp, "%Y");
 }
 
 std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) const
 {
 	return GetArchiveDirectory(timestamp) +
 	'/' +
-	GetTimeStr(now, "%m_%d") +
+	GetTimeStr(timestamp, "%m_%d") +
 	archiveFileExtension;
 }
 
 Configuration::Configuration()
 : fetchTimeoutMs(5000),
-writeToArchive(false),
 writeOnFailure(false),
-writeReport(false),
 isValid(false)
 {
 }
 
 Configuration::Configuration(const std::string & configurationFile)
 : fetchTimeoutMs(5000),
-writeToArchive(false),
 writeOnFailure(false),
-writeReport(false),
 isValid(false)
 {
 	LoadFromFile(configurationFile);

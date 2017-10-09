@@ -19,7 +19,8 @@ protected:
 
 public:
 	// Validates the current configuration values for not being empty
-	bool Validate() const;
+	// sets errorMsg, therefore not const
+	bool Validate();
 
 	bool LoadFromFile(const std::string & fileLocation);
 

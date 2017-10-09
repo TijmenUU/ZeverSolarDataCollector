@@ -1,4 +1,4 @@
-#include "Zeverdata.hpp"
+#include "zeverdata.hpp"
 #include "timeutils.hpp"
 
 #include <curl/curl.h> // tested with libcurl4-openSSH
