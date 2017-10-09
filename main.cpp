@@ -376,6 +376,8 @@ inline bool CreateDirectory(const char * dirpath, const unsigned int dirPerm = 0
 	{
 		return false;
 	}
+
+	std::cout << "Creating dir " << dirpath << std::endl; // DEBUG
 	return true;
 }
 
@@ -390,6 +392,7 @@ inline bool CreateFile(const char * filePath, const unsigned int filePerm = 0644
 	{
 		return false;
 	}
+	std::cout << "Creating file " << filePath << std::endl; // DEBUG
 
 	close(fileDescriptor);
 	return true;
