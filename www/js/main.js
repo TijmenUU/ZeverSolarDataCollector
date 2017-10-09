@@ -2,7 +2,6 @@
 
 const MaxSolarPowerWatts = 3000;
 const dataDir = '/solarpanel/';
-const todayFile = 'dayresults.txt';
 const archiveFile = 'YYYY/MM_DD[.txt]';
 const chartHeight = 600; // in px
 /* Strings */
@@ -16,7 +15,7 @@ const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden
 const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
-window.onload = LoadFile(todayFile, ParseData, DisplayError);
+window.onload = LoadFile(moment().format(archiveFile), ParseData, DisplayError);
 
 function FileExists(file)
 {
@@ -77,15 +76,7 @@ function TryNextDay()
 
 function LoadFile(file, successMethod, errorMethod)
 {
-	var path;
-	if(file === undefined || file === null || file.length == 0)
-	{
-		path = dataDir + todayFile;
-	}
-	else
-	{
-		path = dataDir + file;
-	}
+	const path = dataDir + file;
 
 	var xhr = new XMLHttpRequest();
 	xhr.onreadystatechange = function() {
