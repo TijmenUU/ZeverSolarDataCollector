@@ -161,7 +161,7 @@ std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) con
 {
 	return GetArchiveDirectory(timestamp) +
 	'/' +
-	TimeUtils::GetTimeStr(timestamp, "%m_%d") +
+	TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
 	archiveFileExtension;
 }
 
