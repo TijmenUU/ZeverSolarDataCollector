@@ -3,6 +3,7 @@
 #include "zeverdata.hpp"
 
 #include <ctime>
+#include <stdexcept>
 #include <fstream>
 #include <string>
 
