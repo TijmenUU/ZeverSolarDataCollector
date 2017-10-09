@@ -15,7 +15,7 @@ namespace TimeUtils
 	{
 		tm * timeInfo;
 		char buffer[length];
-		timeInfo = localtime(&_time);
+		timeInfo = localtime(&timestamp);
 		strftime(buffer, length, format, timeInfo);
 
 		std::string result;

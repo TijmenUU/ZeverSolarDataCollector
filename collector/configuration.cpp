@@ -34,7 +34,7 @@ const std::array<const std::string, 4> cConfigurationBinaryValues = {
 	"n"
 };
 
-ConfigurationTag GetTag(const std::string & tagstr) const;
+ConfigurationTag GetTag(const std::string & tagstr)
 {
 	auto result = std::find(cConfigurationTags.begin(),
 		cConfigurationTags.end(),
@@ -50,7 +50,7 @@ ConfigurationTag GetTag(const std::string & tagstr) const;
 	}
 }
 
-bool GetBinaryValue(std::string valuestr) const
+bool GetBinaryValue(std::string valuestr)
 {
 	std::transform(valuestr.begin(), valuestr.end(), valuestr.begin(),
 		[](unsigned char c) -> unsigned char { return std::tolower(c); });
