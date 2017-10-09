@@ -360,7 +360,7 @@ inline std::string GetTimeStr(const std::time_t & _time, const char * format)
 inline bool FileExists(const char * filepath)
 {
 	struct stat st = {0};
-	if(stat(filepath, &st) != 0)
+	if(stat(filepath, &st) < 0)
 	{
 		return false;
 	}
