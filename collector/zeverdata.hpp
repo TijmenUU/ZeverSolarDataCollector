@@ -27,7 +27,7 @@ public:
 	std::string GetErrorMsg() const { return errorMsg; }
 
 	std::string GetOutputStr(const std::time_t & timestamp,
-		const unsigned int collumnPadding = 6U) const;
+		const unsigned int collumnPadding = 8U) const;
 	bool ParseString(const std::string & str);
 	bool FetchDataFromURL(const std::string & url, const unsigned int timeout);
 

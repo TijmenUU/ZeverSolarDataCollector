@@ -9,10 +9,10 @@ std::string ZeverData::GetOutputStr(const std::time_t & timestamp,
 	const unsigned int collumnPadding) const
 {
 	std::stringstream ss;
-
-	ss << TimeUtils::GetIsoDateTimeStr(timestamp) << std::setw(collumnPadding);
-	ss << std::to_string(currentPower) << std::setw(collumnPadding);
-	ss << std::to_string(powerToday) << std::endl;
+	ss << std::fixed << std::setprecision(2);
+	ss << TimeUtils::GetIsoDateTimeStr(timestamp);
+	ss << std::setw(collumnPadding) << currentPower;
+	ss << std::setw(collumnPadding) << powerToday << std::endl;
 
 	return ss.str();
 }
