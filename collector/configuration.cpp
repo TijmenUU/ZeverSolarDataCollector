@@ -154,14 +154,14 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 
 std::string Configuration::GetArchiveDirectory(const std::time_t & timestamp) const
 {
-	return archiveDirectory + GetFormattedTimeStr(timestamp, "%Y");
+	return archiveDirectory + TimeUtils::GetFormattedTimeStr(timestamp, "%Y");
 }
 
 std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) const
 {
 	return GetArchiveDirectory(timestamp) +
 	'/' +
-	GetTimeStr(timestamp, "%m_%d") +
+	TimeUtils::GetTimeStr(timestamp, "%m_%d") +
 	archiveFileExtension;
 }
 

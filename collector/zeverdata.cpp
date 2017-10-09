@@ -2,6 +2,7 @@
 #include "timeutils.hpp"
 
 #include <curl/curl.h> // tested with libcurl4-openSSH
+#include <iomanip> // setw
 #include <sstream>
 
 std::string ZeverData::GetOutputStr(const std::time_t & timestamp,
@@ -9,13 +10,14 @@ std::string ZeverData::GetOutputStr(const std::time_t & timestamp,
 {
 	std::stringstream ss;
 
-	ss << isotime << std::setw(collumnPadding) << std::to_string(currentPower);
-	ss << std::setw(collumnPadding) << std::to_string(powerToday) << std::endl;
+	ss << TimeUtils::GetIsoDateTimeStr(timestamp) << std::setw(collumnPadding);
+	ss << std::to_string(currentPower) << std::setw(collumnPadding);
+	ss << std::to_string(powerToday) << std::endl;
 
 	return ss.str();
 }
 
-bool ZeverData::ParseString(const std:string & str)
+bool ZeverData::ParseString(const std::string & str)
 {
 	std::stringstream ss;
 	ss.str(str);
@@ -37,7 +39,7 @@ bool ZeverData::ParseString(const std:string & str)
 
 	if(!isValid)
 	{
-		errorMsg = "Error during parsing of zever data.";
+		errorMsg = "Error during parsing of zever data: " + str;
 	}
 
 	return isValid;
