@@ -515,7 +515,7 @@ bool WriteReport(const Configuration & config,
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::trunc); // overwrite file
-			std::cout << "trunc "; // DEBUG
+			std::cout << date << " != " << previousEntry.substr(0, date.size()) << ' '; // DEBUG
 		}
 	}
 	else
@@ -563,7 +563,7 @@ int main(int argc, char ** argv)
 	//std::cout << "Write a report: " << config.WriteReport() << std::endl;
 	//std::cout << "\tReporting to " << config.ReportFileLocation() << std::endl;
 	// END DEBUG
-	
+
 	if(!config.IsValid())
 	{
 		throw std::runtime_error("The loaded configuration is invalid.");
