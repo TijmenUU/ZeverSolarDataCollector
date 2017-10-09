@@ -6,7 +6,7 @@ namespace TimeUtils
 	// to length necessarily
 	std::string GetFormattedTimeStr(const std::time_t & timestamp,
 		const char * format,
-		const size_t length = 64U)
+		const size_t length)
 	{
 		tm * timeInfo;
 		char buffer[length];

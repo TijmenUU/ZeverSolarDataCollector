@@ -20,7 +20,7 @@ namespace FileUtils
 
 	// Default permission is 755 (rwxr-xr-x)
 	bool CreateDirectory(const std::string & dirpath,
-		const unsigned int dirPerm = 0755)
+		const unsigned int dirPerm)
 	{
 		if(mkdir(dirpath.c_str(), dirPerm) == 0)
 		{
@@ -30,7 +30,7 @@ namespace FileUtils
 	}
 
 	bool CreateFile(const std::string & filePath,
-		const unsigned int filePerm = 0644)
+		const unsigned int filePerm)
 	{
 		int fileDescriptor = open(filePath.c_str(), O_RDWR | O_CREAT, filePerm);
 		if(fileDescriptor == -1)
