@@ -5,7 +5,7 @@
 #include <exception>
 #include <fstream>
 #include <iomanip> // skipws
-#include <iostream> // DEBUG
+//#include <iostream> // DEBUG
 #include <sstream> // stringstream
 #include <string>
 #include <vector>
@@ -378,7 +378,7 @@ inline bool CreateDirectory(const char * dirpath, const unsigned int dirPerm = 0
 		return false;
 	}
 
-	std::cout << "Creating dir " << dirpath << std::endl; // DEBUG
+	//std::cout << "Creating dir " << dirpath << std::endl; // DEBUG
 	return true;
 }
 
@@ -393,7 +393,7 @@ inline bool CreateFile(const char * filePath, const unsigned int filePerm = 0644
 	{
 		return false;
 	}
-	std::cout << "Creating file " << filePath << std::endl; // DEBUG
+	//std::cout << "Creating file " << filePath << std::endl; // DEBUG
 
 	close(fileDescriptor);
 	return true;
@@ -495,7 +495,7 @@ bool WriteReport(const Configuration & config,
 
 	std::ofstream reportFileOut;
 	std::ifstream reportFileIn;
-	std::cout << config.ReportFileLocation() << ' '; // DEBUG
+	//std::cout << config.ReportFileLocation() << ' '; // DEBUG
 	reportFileIn.open(config.ReportFileLocation());
 	if(reportFileIn.is_open() &&
 		reportFileIn.peek() != std::ifstream::traits_type::eof()) // not empty
@@ -508,21 +508,21 @@ bool WriteReport(const Configuration & config,
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::app); // append to the file
-			std::cout << "app "; // DEBUG
+			//std::cout << "app "; // DEBUG
 		}
 		else
 		{
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::trunc); // overwrite file
-			std::cout << date << " != " << previousEntry.substr(0, date.size()) << ' '; // DEBUG
+			//std::cout << date << " != " << previousEntry.substr(0, date.size()) << ' '; // DEBUG
 		}
 	}
 	else
 	{
 		reportFileOut.open(config.ReportFileLocation(),
 			std::fstream::out | std::fstream::trunc); // overwrite file
-		std::cout << "ctrunc "; // DEBUG
+		//std::cout << "ctrunc "; // DEBUG
 	}
 
 	if(reportFileOut.is_open())
@@ -554,8 +554,8 @@ int main(int argc, char ** argv)
 	}
 
 	// DEBUG
-	std::time_t now = time(0);
-	std::cout << GetTimeStr(now, "%Y-%m-%dT%H:%M:%S") << ' ';
+	//std::time_t now = time(0);
+	//std::cout << GetTimeStr(now, "%Y-%m-%dT%H:%M:%S") << ' ';
 	//std::cout << "Fetching " << config.URLtoFetch() << std::endl;
 	//std::cout << "Write on failure: " << config.WriteOnFailure() << std::endl;
 	//std::cout << "Write to archive: " << config.WriteArchive() << std::endl;
@@ -582,6 +582,6 @@ int main(int argc, char ** argv)
 		throw std::runtime_error("Error during writing of the report file.");
 		//std::cerr << "Error during writing of the report file." << std::endl;
 	}
-	std::cout << std::endl; // DEBUG
+	//std::cout << std::endl; // DEBUG
 	return 0;
 }
