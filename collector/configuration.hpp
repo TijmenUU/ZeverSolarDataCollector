@@ -26,8 +26,8 @@ public:
 	// Getters
 	bool IsValid() const { return isValid; }
 	std::string GetURL() const { return fetchURL; }
-	unsigned int FetchTimeoutInMs() const { return fetchTimeoutMs; }
-	bool WriteArchive() const { return writeToArchive; }
+	// in milliseconds
+	unsigned int GetFetchTimeOut() const { return fetchTimeoutMs; }
 	bool WriteOnFailure() const { return writeOnFailure; }
 	std::string GetErrorMsg() const { return errorMsg; }
 

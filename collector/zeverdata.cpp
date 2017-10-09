@@ -9,8 +9,8 @@ std::string ZeverData::GetOutputStr(const std::time_t & timestamp,
 {
 	std::stringstream ss;
 
-	ss << isotime << std::setw(collumnPadding) << currentPower;
-	ss << std::setw(collumnPadding) << powerToday << std::endl;
+	ss << isotime << std::setw(collumnPadding) << std::to_string(currentPower);
+	ss << std::setw(collumnPadding) << std::to_string(powerToday) << std::endl;
 
 	return ss.str();
 }

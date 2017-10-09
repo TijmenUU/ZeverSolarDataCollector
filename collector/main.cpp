@@ -27,13 +27,15 @@ int main(int argc, char ** argv)
 	}
 
 	ZeverData data;
-	if(!data.FetchDataFromURL(config.GetURL()) && !config.WriteOnFailure())
+	if(!data.FetchDataFromURL(config.GetURL(), config.GetFetchTimeOut()) &&
+		!config.WriteOnFailure())
 	{
 		return 0;
 	}
 
+	const std::time_t now = time(0);
 	// Check working directory (YEAR)
-	const auto archiveDirectory = config.GetArchiveDirectory();
+	const auto archiveDirectory = config.GetArchiveDirectory(now);
 	if(!FileUtils::Exists(archiveDirectory))
 	{
 		if(!FileUtils::CreateDirectory(archiveDirectory))
@@ -43,7 +45,7 @@ int main(int argc, char ** argv)
 		}
 	}
 	// Check file (YEAR/MM_DD)
-	const auto archiveFile = config.GetArchiveFilePath();
+	const auto archiveFile = config.GetArchiveFilePath(now);
 	if(!FileUtils::Exists(archiveFile))
 	{
 		if(!FileUtils::CreateFile(archiveFile))
@@ -58,7 +60,7 @@ int main(int argc, char ** argv)
 	{
 		throw std::runtime_error("Cannot access " + archiveFile + " for writing.");
 	}
-	outputFile << data.GetOutputStr();
+	outputFile << data.GetOutputStr(now);
 	outputFile.close();
 
 	return 0;

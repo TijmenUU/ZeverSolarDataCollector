@@ -22,8 +22,8 @@ protected:
 
 public:
 	bool IsValid() const { return isValid; }
-	std::string GetCurrentPower() const { return currentPower; }
-	std::string GetCumulativePower() const { return powerToday; }
+	int GetCurrentPower() const { return currentPower; }
+	double GetCumulativePower() const { return powerToday; }
 	std::string GetErrorMsg() const { return errorMsg; }
 
 	std::string GetOutputStr(const std::time_t & timestamp,
