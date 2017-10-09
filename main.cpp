@@ -458,6 +458,8 @@ bool WriteArchive(const Configuration & config,
 		}
 	}
 
+	std::cout << storagePath << ' ';
+
 	std::ofstream archiveOut;
 	archiveOut.open(storagePath, std::fstream::out | std::fstream::app);
 	if(archiveOut.is_open())
@@ -493,6 +495,7 @@ bool WriteReport(const Configuration & config,
 
 	std::ofstream reportFileOut;
 	std::ifstream reportFileIn;
+	std::cout << config.ReportFileLocation() << ' '; // DEBUG
 	reportFileIn.open(config.ReportFileLocation());
 	if(reportFileIn.is_open() &&
 		reportFileIn.peek() != std::ifstream::traits_type::eof()) // not empty
@@ -505,18 +508,21 @@ bool WriteReport(const Configuration & config,
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::app); // append to the file
+			std::cout << "app "; // DEBUG
 		}
 		else
 		{
 			reportFileIn.close();
 			reportFileOut.open(config.ReportFileLocation(),
 				std::fstream::out | std::fstream::trunc); // overwrite file
+			std::cout << "trunc "; // DEBUG
 		}
 	}
 	else
 	{
 		reportFileOut.open(config.ReportFileLocation(),
 			std::fstream::out | std::fstream::trunc); // overwrite file
+		std::cout << "ctrunc "; // DEBUG
 	}
 
 	if(reportFileOut.is_open())
@@ -548,6 +554,8 @@ int main(int argc, char ** argv)
 	}
 
 	// DEBUG
+	std::time_t now = time(0);
+	std::cout << GetTimeStr(now, "%Y-%m-%dT%H:%M:%S") << ' ';
 	//std::cout << "Fetching " << config.URLtoFetch() << std::endl;
 	//std::cout << "Write on failure: " << config.WriteOnFailure() << std::endl;
 	//std::cout << "Write to archive: " << config.WriteArchive() << std::endl;
@@ -555,7 +563,7 @@ int main(int argc, char ** argv)
 	//std::cout << "Write a report: " << config.WriteReport() << std::endl;
 	//std::cout << "\tReporting to " << config.ReportFileLocation() << std::endl;
 	// END DEBUG
-
+	
 	if(!config.IsValid())
 	{
 		throw std::runtime_error("The loaded configuration is invalid.");
@@ -574,6 +582,6 @@ int main(int argc, char ** argv)
 		throw std::runtime_error("Error during writing of the report file.");
 		//std::cerr << "Error during writing of the report file." << std::endl;
 	}
-
+	std::cout << std::endl; // DEBUG
 	return 0;
 }
