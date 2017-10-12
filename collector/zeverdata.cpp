@@ -27,7 +27,7 @@ bool ZeverData::ParseString(const std::string & str)
 	ss >> registeryID;
 	ss >> registeryKey;
 	ss >> hardwareVersion;
-	const std::string versionInfo;
+	std::string versionInfo;
 	ss >> versionInfo;
 	size_t splitPos = versionInfo.find('+');
 	appVersion = versionInfo.substr(0, splitPos);
