@@ -10,7 +10,7 @@ class ZeverData
 protected:
 	bool isValid;
 	int number0, number1;
-	std::string registeryID, registeryKey, hardwareVersion, softwareVersion;
+	std::string registeryID, registeryKey, hardwareVersion, appVersion, wifiVersion;
 	std::string timeValue, dateValue, zeverCloudStatus;
 	int number3;
 	std::string inverterSN;
