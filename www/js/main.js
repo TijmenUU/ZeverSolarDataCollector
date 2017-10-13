@@ -161,10 +161,10 @@ function ParseData(data)
 function UpdateChartWidth()
 {
 	var newWidth = parseInt($("#chart-col").css("width"));
-	var existingPlot = document.getElementById('chart');
+	var existingPlot = document.getElementById('chart-col');
 	if(existingPlot.layout.width != newWidth)
 	{
-		Plotly.relayout('chart', { width: newWidth /*, legend: { x: GetLegendPosX(newWidth) }*/ });
+		Plotly.relayout('chart-col', { width: newWidth /*, legend: { x: GetLegendPosX(newWidth) }*/ });
 	}
 }
 
@@ -174,6 +174,7 @@ function DrawChart(dateLabels,
 	upperBoundPower,
 	upperBoundCummulative)
 {
+	document.getElementById("chart-col").innerHTML = ""; // clear possible error msg
 	var trace1 = {
 		x: dateLabels,
 		y: powerProduction,
@@ -245,7 +246,7 @@ function DrawChart(dateLabels,
 
 	var data = [trace1, trace2];
 
-	Plotly.newPlot('chart', data, layout, {displayModeBar: false});
+	Plotly.newPlot('chart-col', data, layout, {displayModeBar: false});
 
 	window.onresize = UpdateChartWidth;
 }
