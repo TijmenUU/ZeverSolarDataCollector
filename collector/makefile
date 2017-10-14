@@ -10,7 +10,7 @@ COLLECTOROBJS = fileutils.o timeutils.o configuration.o zeverdata.o collector.o
 COLLECTORLIBS = -lcurl
 
 DECIMALFIXBUILDNAME = decimalfixer
-DECIMALFIXOBJS = configuration.o decimalfixer.o
+DECIMALFIXOBJS = timeutils.o configuration.o decimalfixer.o
 DECIMALFIXLIBS =
 
 fileutils.o: fileutils.hpp
