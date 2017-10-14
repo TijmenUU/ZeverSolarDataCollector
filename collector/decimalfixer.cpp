@@ -93,24 +93,37 @@ void DecimalFix(std::vector<std::string> & content)
 
 int main(int argc, char ** argv)
 {
-	Configuration config;
-	if(argc > 1)
+	std::string fileToFix;
+	if(argc == 2)
 	{
+		Configuration config;
 		config.LoadFromFile(argv[1]);
+
+		if(!config.IsValid())
+		{
+			throw std::runtime_error(config.GetErrorMsg());
+		}
+
+		// Get yesterday's timestamp
+		const std::time_t timestamp = time(nullptr) - cDayInUnixTime;
+		fileToFix = config.GetArchiveFilePath(timestamp);
+	}
+	else if(argc == 3)
+	{
+		std::string arg1 = argv[1];
+		if(arg1.compare("-f") == 0)
+		{
+			fileToFix = argv[2];
+		}
+		else
+		{
+			throw std::runtime_error("Unknown launch parameters.");
+		}
 	}
 	else
 	{
-		config.LoadFromFile("collecting.conf");
+		throw std::runtime_error("Missing or unknown launch parameters.");
 	}
-
-	if(!config.IsValid())
-	{
-		throw std::runtime_error(config.GetErrorMsg());
-	}
-
-	// Get yesterday's timestamp
-	const std::time_t timestamp = time(nullptr) - cDayInUnixTime;
-	const std::string fileToFix = config.GetArchiveFilePath(timestamp);
 
 	std::vector<std::string> fileContents;
 	if(GetFileContents(fileToFix, fileContents))
