@@ -1,9 +1,17 @@
-OBJS = fileutils.o timeutils.o configuration.o zeverdata.o main.o
+# Build settings
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
-LIBS = -lcurl
+
+# Build specific settings
+COLLECTORBUILDNAME = collector
+COLLECTOROBJS = fileutils.o timeutils.o configuration.o zeverdata.o collector.o
+COLLECTORLIBS = -lcurl
+
+DECIMALFIXBUILDNAME = decimalfixer
+DECIMALFIXOBJS = configuration.o decimalfixer.o
+DECIMALFIXLIBS =
 
 fileutils.o: fileutils.hpp
 	$(CC) $(CFLAGS) fileutils.cpp
@@ -17,11 +25,19 @@ configuration.o: configuration.hpp timeutils.hpp
 zeverdata.o: zeverdata.hpp timeutils.hpp
 	$(CC) $(CFLAGS) zeverdata.cpp
 
-main.o: fileutils.hpp configuration.hpp zeverdata.hpp
-	$(CC) $(CFLAGS) main.cpp
+collector.o: fileutils.hpp configuration.hpp zeverdata.hpp
+	$(CC) $(CFLAGS) collector.cpp
 
-test: $(OBJS)
-	$(CC) $(LFLAGS) $(OBJS) -o test $(LIBS)
+decimalfixer.o : configuration.hpp
+	$(CC) $(CFLAGS) decimalfixer.cpp
+
+collector: $(COLLECTOROBJS)
+	$(CC) $(LFLAGS) $(COLLECTOROBJS) -o $(COLLECTORBUILDNAME) $(COLLECTORLIBS)
+
+decimalfixer: $(DECIMALFIXOBJS)
+	$(CC) $(LFLAGS) $(DECIMALFIXOBJS) -o $(DECIMALFIXBUILDNAME) $(DECIMALFIXLIBS)
+
+all: collector decimalfixer
 
 clean:
-	\rm *.o test
+	\rm *.o $(COLLECTORBUILDNAME) $(DECIMALFIXBUILDNAME)
