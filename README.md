@@ -1,5 +1,5 @@
 # ZeverSolarDataCollector
-Simple data collecting program for ZeverSolar Sxxxx "smart" inverters with a network interface (referred to as "combox" by the manufacturer). These are build in for the Zeverlution Sxxxx series.
+Simple data collecting program for ZeverSolar Sxxxx "smart" inverters with a network interface (referred to as "combox" by the manufacturer). These are build in for the Zeverlution Sxxxx series. Currently supports only (GNU) Linux, tested on a Raspberry Pi 1 running `Linux DietPi 4.9.52+ Mon 2 Oct 2017 build` and a Lenovo Thinkpad T410 running `Linux 4.10.0-37-generic #41~16.04.1 Ubunutu SMP`.
 
 # Data Collection
 The data collector can be build by using the makefile in the `/collector/` folder. Build the tool using `make collector` with the existing makefile or adapt the makefile to your requirements and environment. Make your own configuration file by using `/collector.conf` as a template. Supply the program with this configuration file as a first argument when calling the program like so `./collector /link-to/your/configuration/file.conf`. Be sure that the configuration file has the correct permissions set. Use crontab to run the program at your desired interval (see `sudo crontab -u user_name -e`) or use a bash script.
