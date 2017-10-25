@@ -6,7 +6,7 @@ The data collector can be build by using the makefile in the `/collector/` folde
 
 The program by default creates folders with permission 755 and files with permission 644 to be compatible with the data displaying website below. Configurable permissions are in the pipeline but are not supported at this time.
 
-If you only want to keep the of today you could add a line to your `crontab` that deletes the contents of the root archive folder (set in your configuration file) at the desired time.
+If you only want to keep the file of today you could add a line to your `crontab` that deletes the contents of the root archive folder (set in your configuration file) at the desired time.
 
 Dependencies for this program are:
 - `libcurl4-openssl-dev` which can be installed using your package manager.
