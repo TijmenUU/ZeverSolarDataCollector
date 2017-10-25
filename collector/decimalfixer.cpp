@@ -3,14 +3,11 @@
 
 #include <ctime>
 #include <fstream>
-#include <iostream> // DEBUG
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <utility> // swap
 #include <vector>
-
-const unsigned int cDayInUnixTime = 86400;
 
 // Appends the contents of the file to the out_content vector line by line
 bool GetFileContents(const std::string & filepath,
@@ -93,36 +90,53 @@ void DecimalFix(std::vector<std::string> & content)
 
 int main(int argc, char ** argv)
 {
+	const unsigned int cDayInUnixTime = 86400; // in seconds
+
 	std::string fileToFix;
-	if(argc == 2)
+	std::time_t timestamp;
+	Configuration config;
+	if(argc == 3 && argv[1][0] == '-')
 	{
-		Configuration config;
-		config.LoadFromFile(argv[1]);
-
-		if(!config.IsValid())
+		switch(argv[1][1])
 		{
-			throw std::runtime_error(config.GetErrorMsg());
-		}
-
-		// Get yesterday's timestamp
-		const std::time_t timestamp = time(nullptr) - cDayInUnixTime;
-		fileToFix = config.GetArchiveFilePath(timestamp);
-	}
-	else if(argc == 3)
-	{
-		std::string arg1 = argv[1];
-		if(arg1.compare("-f") == 0)
-		{
+			case 's':
 			fileToFix = argv[2];
-		}
-		else
-		{
-			throw std::runtime_error("Unknown launch parameters.");
+			break;
+
+			case 't':
+			config.LoadFromFile(argv[2]);
+			if(!config.IsValid())
+			{
+				throw std::runtime_error(config.GetErrorMsg());
+			}
+
+			timestamp = time(nullptr);
+			fileToFix = config.GetArchiveFilePath(timestamp);
+			break;
+
+			case 'y':
+			config.LoadFromFile(argv[2]);
+
+			if(!config.IsValid())
+			{
+				throw std::runtime_error(config.GetErrorMsg());
+			}
+
+			timestamp = time(nullptr) - cDayInUnixTime;
+			fileToFix = config.GetArchiveFilePath(timestamp);
+			break;
+
+			default:
+			throw std::runtime_error("Unknown launch parameter " +
+				std::string(argv[1]));
+			break;
 		}
 	}
 	else
 	{
-		throw std::runtime_error("Missing or unknown launch parameters.");
+		throw std::runtime_error(
+			"Supported flags are -s(specific file) [filepath], -t(today) [configur"
+			"ation file path] and -y(yesterday) [configuration file path].");
 	}
 
 	std::vector<std::string> fileContents;
