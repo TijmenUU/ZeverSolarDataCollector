@@ -6,7 +6,7 @@
 #include <sys/types.h> // include before stat.h
 #include <sys/stat.h> // stat
 #include <fcntl.h> // open
-#include <unistd.h> // close
+#include <unistd.h> // close, unlink
 
 #else
 #error Platform not supported
@@ -29,6 +29,7 @@ namespace FileUtils
 		return (fileAttributes != INVALID_FILE_ATTRIBUTES);
 	}
 
+// This is undoing the macro colliding with out name from Windows.h
 #undef CreateDirectory
 	bool CreateDirectory(const std::string & dirpath,
 		const unsigned int dirPerm)
@@ -36,6 +37,7 @@ namespace FileUtils
 		return ::CreateDirectoryA(dirpath.c_str(), nullptr);
 	}
 
+// This is undoing the macro colliding with out name from Windows.h
 #undef CreateFile
 	bool CreateFile(const std::string & filePath,
 		const unsigned int filePerm)
@@ -56,27 +58,26 @@ namespace FileUtils
 		return ::CloseHandle(result);
 	}
 
+// This is undoing the macro colliding with out name from Windows.h
+#undef DeleteFile
+	bool DeleteFile(const std::string & filepath)
+	{
+		return DeleteFileA(filepath.c_str());
+	}
+
 #elif defined __linux
 	// Path can be a directory or file
 	bool Exists(const std::string & path)
 	{
 		struct stat st = {0};
-		if(stat(path.c_str(), &st) == 0)
-		{
-			return true;
-		}
-		return false;
+		return stat(path.c_str(), &st) == 0;
 	}
 
 	// Default permission is 755 (rwxr-xr-x)
 	bool CreateDirectory(const std::string & dirpath,
 		const unsigned int dirPerm)
 	{
-		if(mkdir(dirpath.c_str(), dirPerm) == 0)
-		{
-			return true;
-		}
-		return false;
+		return mkdir(dirpath.c_str(), dirPerm) == 0;
 	}
 
 	bool CreateFile(const std::string & filePath,
@@ -89,6 +90,11 @@ namespace FileUtils
 		}
 		close(fileDescriptor);
 		return true;
+	}
+
+	bool DeleteFile(const std::string & filepath)
+	{
+		return unlink(filepath.c_str()) == 0;
 	}
 #endif
 }
