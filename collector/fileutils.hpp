@@ -15,6 +15,8 @@ namespace FileUtils
 
 	bool CreateFile(const std::string & filePath,
 		const unsigned int filePerm = 0644);
+
+	bool DeleteFile(const std::string & filepath);
 }
 
 #endif
