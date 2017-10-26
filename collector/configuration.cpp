@@ -16,15 +16,17 @@ enum class ConfigurationTag
 	FETCHTIMEOUT,
 	WRITEZERO,
 	ARCHIVELOCATION,
-	ARCHIVEFILEEXTENSION
+	ARCHIVEFILEEXTENSION,
+	SINGLEFILEARCHIVEPATH
 };
 
-const std::array<const std::string, 5> cConfigurationTags = {
+const std::array<const std::string, 6> cConfigurationTags = {
 	"fetchURL",
 	"fetchTimeout",
 	"writeZeroOnFailedFetch",
 	"archiveLocation",
-	"archiveFileExtension"
+	"archiveFileExtension",
+	"singleFileArchivePath"
 };
 
 const int cFirstNoElement = 2;
@@ -95,19 +97,20 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 		while(input.good())
 		{
 			std::string rawLine;
+
 			std::getline(input, rawLine);
 			if(rawLine.size() < 1 || rawLine[0] == cCommentSymbol)
 			{
 				continue;
 			}
 
-			std::stringstream line;
-			line.str(rawLine);
-			line >> std::skipws; // ignore whitespaces
-
-			std::string tagstr, valuestr;
-			if(line >> tagstr && line >> valuestr)
+			auto splitPos = rawLine.find(' ');
+			if(splitPos != std::string::npos)
 			{
+				std::string tagstr = rawLine.substr(0, splitPos);
+				++splitPos;
+				std::string valuestr = rawLine.substr(splitPos, rawLine.size());
+
 				auto tag = GetTag(tagstr);
 				switch(tag)
 				{
@@ -132,6 +135,10 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 					{
 						archiveFileExtension = valuestr;
 					}
+					break;
+
+					case ConfigurationTag::SINGLEFILEARCHIVEPATH:
+					singleFileArchivePath = valuestr;
 					break;
 
 					case ConfigurationTag::UNKNOWN:
@@ -163,6 +170,11 @@ std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) con
 	'/' +
 	TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
 	archiveFileExtension;
+}
+
+std::string Configuration::GetSingleArchiveFilePath() const
+{
+	return singleFileArchivePath;
 }
 
 Configuration::Configuration()

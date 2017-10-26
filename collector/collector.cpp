@@ -34,26 +34,36 @@ int main(int argc, char ** argv)
 		return 0;
 	}
 
-	const std::time_t now = time(0);
-	// Check working directory (YEAR)
-	const auto archiveDirectory = config.GetArchiveDirectory(now);
-	if(!FileUtils::Exists(archiveDirectory))
+	std::string archiveFile;
+	if(config.UseSingleFileArchive())
 	{
-		if(!FileUtils::CreateDirectory(archiveDirectory))
-		{
-			throw std::runtime_error("Cannot create archive directory "
-				+ archiveDirectory);
-		}
+		archiveFile = config.GetSingleArchiveFilePath();
 	}
-	// Check file (YEAR/MM_DD)
-	const auto archiveFile = config.GetArchiveFilePath(now);
-	if(!FileUtils::Exists(archiveFile))
+	else
 	{
-		if(!FileUtils::CreateFile(archiveFile))
+		const std::time_t now = time(0);
+		// Check working directory (YEAR)
+		const auto archiveDirectory = config.GetArchiveDirectory(now);
+		if(!FileUtils::Exists(archiveDirectory))
 		{
-			throw std::runtime_error("Cannot create file " + archiveFile);
+			if(!FileUtils::CreateDirectory(archiveDirectory))
+			{
+				throw std::runtime_error("Cannot create archive directory "
+					+ archiveDirectory);
+			}
 		}
+		// Check file (YEAR/MM_DD)
+		archiveFile = config.GetArchiveFilePath(now);
+		if(!FileUtils::Exists(archiveFile))
+		{
+			if(!FileUtils::CreateFile(archiveFile))
+			{
+				throw std::runtime_error("Cannot create file " + archiveFile);
+			}
+		}
+
 	}
+
 	// Write results
 	std::ofstream outputFile;
 	outputFile.open(archiveFile, std::fstream::out | std::fstream::app);
