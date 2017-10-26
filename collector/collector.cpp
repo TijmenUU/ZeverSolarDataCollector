@@ -34,6 +34,7 @@ int main(int argc, char ** argv)
 		return 0;
 	}
 
+	const std::time_t now = time(0);
 	std::string archiveFile;
 	if(config.UseSingleFileArchive())
 	{
@@ -41,7 +42,6 @@ int main(int argc, char ** argv)
 	}
 	else
 	{
-		const std::time_t now = time(0);
 		// Check working directory (YEAR)
 		const auto archiveDirectory = config.GetArchiveDirectory(now);
 		if(!FileUtils::Exists(archiveDirectory))
