@@ -15,18 +15,18 @@ enum class ConfigurationTag
 	FETCHURL,
 	FETCHTIMEOUT,
 	WRITEZERO,
-	ARCHIVELOCATION,
+	ARCHIVEDIRECTORY,
 	ARCHIVEFILEEXTENSION,
-	SINGLEFILEARCHIVEPATH
+	ARCHIVEFILENAME
 };
 
 const std::array<const std::string, 6> cConfigurationTags = {
 	"fetchURL",
 	"fetchTimeout",
 	"writeZeroOnFailedFetch",
-	"archiveLocation",
+	"archiveDirectory",
 	"archiveFileExtension",
-	"singleFileArchivePath"
+	"archiveFilename"
 };
 
 const int cFirstNoElement = 2;
@@ -80,18 +80,26 @@ bool Configuration::Validate()
 	}
 	if(archiveDirectory.size() == 0)
 	{
-		errorMsg = "Missing archive path in configuration file.";
+		errorMsg = "Missing archive directory in configuration file.";
+		return false;
+	}
+	if(archiveFile.size() == 0)
+	{
+		errorMsg = "Missing archive filename.";
 		return false;
 	}
 	return true;
 }
 
-bool Configuration::LoadFromFile(const std::string & fileLocation)
+bool Configuration::LoadFromFile(const std::string & fileLocation,
+	const std::time_t & timestamp)
 {
 	isValid = false;
 
 	std::ifstream input;
 	input.open(fileLocation);
+	bool filenameSpecified = false;
+	std::string archiveFileExtension;
 	if(input.is_open())
 	{
 		while(input.good())
@@ -126,7 +134,7 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 					writeOnFailure = GetBinaryValue(valuestr);
 					break;
 
-					case ConfigurationTag::ARCHIVELOCATION:
+					case ConfigurationTag::ARCHIVEDIRECTORY:
 					archiveDirectory = valuestr;
 					break;
 
@@ -137,8 +145,9 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 					}
 					break;
 
-					case ConfigurationTag::SINGLEFILEARCHIVEPATH:
-					singleFileArchivePath = valuestr;
+					case ConfigurationTag::ARCHIVEFILENAME:
+					archiveFile = valuestr;
+					filenameSpecified = true;
 					break;
 
 					case ConfigurationTag::UNKNOWN:
@@ -155,26 +164,15 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 		return false;
 	}
 
+	if(!filenameSpecified)
+	{
+		archiveDirectory += TimeUtils::GetFormattedTimeStr(timestamp, "%Y");
+		archiveFile = TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
+			archiveFileExtension;
+	}
+
 	isValid = Validate();
 	return true;
-}
-
-std::string Configuration::GetArchiveDirectory(const std::time_t & timestamp) const
-{
-	return archiveDirectory + TimeUtils::GetFormattedTimeStr(timestamp, "%Y");
-}
-
-std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) const
-{
-	return GetArchiveDirectory(timestamp) +
-	'/' +
-	TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
-	archiveFileExtension;
-}
-
-std::string Configuration::GetSingleArchiveFilePath() const
-{
-	return singleFileArchivePath;
 }
 
 Configuration::Configuration()

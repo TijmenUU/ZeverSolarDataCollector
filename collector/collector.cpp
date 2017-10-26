@@ -13,13 +13,14 @@ const std::string cConfigFile = "collecting.conf";
 int main(int argc, char ** argv)
 {
 	Configuration config;
+	const std::time_t now = time(0);
 	if(argc > 1)
 	{
-		config.LoadFromFile(argv[1]);
+		config.LoadFromFile(argv[1], now);
 	}
 	else
 	{
-		config.LoadFromFile(cConfigFile);
+		config.LoadFromFile(cConfigFile, now);
 	}
 
 	if(!config.IsValid())
@@ -34,34 +35,24 @@ int main(int argc, char ** argv)
 		return 0;
 	}
 
-	const std::time_t now = time(0);
-	std::string archiveFile;
-	if(config.UseSingleFileArchive())
+	// Check working directory (YEAR)
+	const auto archiveDirectory = config.GetArchiveDirectory();
+	if(!FileUtils::Exists(archiveDirectory))
 	{
-		archiveFile = config.GetSingleArchiveFilePath();
+		if(!FileUtils::CreateDirectory(archiveDirectory))
+		{
+			throw std::runtime_error("Cannot create archive directory "
+				+ archiveDirectory);
+		}
 	}
-	else
+	// Check file (YEAR/MM_DD)
+	archiveFile = config.GetArchiveFilePath();
+	if(!FileUtils::Exists(archiveFile))
 	{
-		// Check working directory (YEAR)
-		const auto archiveDirectory = config.GetArchiveDirectory(now);
-		if(!FileUtils::Exists(archiveDirectory))
+		if(!FileUtils::CreateFile(archiveFile))
 		{
-			if(!FileUtils::CreateDirectory(archiveDirectory))
-			{
-				throw std::runtime_error("Cannot create archive directory "
-					+ archiveDirectory);
-			}
+			throw std::runtime_error("Cannot create file " + archiveFile);
 		}
-		// Check file (YEAR/MM_DD)
-		archiveFile = config.GetArchiveFilePath(now);
-		if(!FileUtils::Exists(archiveFile))
-		{
-			if(!FileUtils::CreateFile(archiveFile))
-			{
-				throw std::runtime_error("Cannot create file " + archiveFile);
-			}
-		}
-
 	}
 
 	// Write results

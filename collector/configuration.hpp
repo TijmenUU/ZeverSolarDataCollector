@@ -12,9 +12,7 @@ protected:
 	unsigned int fetchTimeoutMs;
 	bool writeOnFailure;
 	std::string archiveDirectory;
-	std::string archiveFileExtension;
-	bool useSingleFileArchive;
-	std::string singleFileArchivePath;
+	std::string archiveFile;
 	bool isValid;
 
 	std::string errorMsg;
@@ -32,12 +30,9 @@ public:
 	// in milliseconds
 	unsigned int GetFetchTimeOut() const { return fetchTimeoutMs; }
 	bool WriteOnFailure() const { return writeOnFailure; }
-	bool UseSingleFileArchive() const { return useSingleFileArchive; }
+	std::string GetArchiveDirectory() { return archiveDirectory; } const;
+	std::string GetArchiveFilePath() { return archiveDirectory + archiveFile } const;
 	std::string GetErrorMsg() const { return errorMsg; }
-
-	std::string GetArchiveDirectory(const std::time_t & timestamp) const;
-	std::string GetArchiveFilePath(const std::time_t & timestamp) const;
-	std::string GetSingleArchiveFilePath() const;
 
 	Configuration();
 

@@ -104,25 +104,25 @@ int main(int argc, char ** argv)
 			break;
 
 			case 't':
-			config.LoadFromFile(argv[2]);
+			timestamp = time(nullptr);
+			config.LoadFromFile(argv[2], timestamp);
 			if(!config.IsValid())
 			{
 				throw std::runtime_error(config.GetErrorMsg());
 			}
 
-			timestamp = time(nullptr);
 			fileToFix = config.GetArchiveFilePath(timestamp);
 			break;
 
 			case 'y':
-			config.LoadFromFile(argv[2]);
+			timestamp = time(nullptr) - cDayInUnixTime;
+			config.LoadFromFile(argv[2], timestamp);
 
 			if(!config.IsValid())
 			{
 				throw std::runtime_error(config.GetErrorMsg());
 			}
 
-			timestamp = time(nullptr) - cDayInUnixTime;
 			fileToFix = config.GetArchiveFilePath(timestamp);
 			break;
 
