@@ -16,8 +16,8 @@ enum class ConfigurationTag
 	FETCHTIMEOUT,
 	WRITEZERO,
 	ARCHIVEDIRECTORY,
-	ARCHIVEFILEEXTENSION,
-	ARCHIVEFILENAME
+	ARCHIVEFILENAME,
+	ARCHIVEFILEEXTENSION
 };
 
 const std::array<const std::string, 6> cConfigurationTags = {
@@ -25,8 +25,8 @@ const std::array<const std::string, 6> cConfigurationTags = {
 	"fetchTimeout",
 	"writeZeroOnFailedFetch",
 	"archiveDirectory",
-	"archiveFileExtension",
-	"archiveFilename"
+	"archiveFilename",
+	"archiveFileExtension"
 };
 
 const int cFirstNoElement = 2;
@@ -91,8 +91,7 @@ bool Configuration::Validate()
 	return true;
 }
 
-bool Configuration::LoadFromFile(const std::string & fileLocation,
-	const std::time_t & timestamp)
+bool Configuration::LoadFromFile(const std::string & fileLocation)
 {
 	isValid = false;
 
@@ -138,16 +137,16 @@ bool Configuration::LoadFromFile(const std::string & fileLocation,
 					archiveDirectory = valuestr;
 					break;
 
+					case ConfigurationTag::ARCHIVEFILENAME:
+					archiveFile = valuestr;
+					filenameSpecified = true;
+					break;
+
 					case ConfigurationTag::ARCHIVEFILEEXTENSION:
 					if(valuestr[0] != '*')
 					{
 						archiveFileExtension = valuestr;
 					}
-					break;
-
-					case ConfigurationTag::ARCHIVEFILENAME:
-					archiveFile = valuestr;
-					filenameSpecified = true;
 					break;
 
 					case ConfigurationTag::UNKNOWN:
@@ -166,8 +165,8 @@ bool Configuration::LoadFromFile(const std::string & fileLocation,
 
 	if(!filenameSpecified)
 	{
-		archiveDirectory += TimeUtils::GetFormattedTimeStr(timestamp, "%Y");
-		archiveFile = TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
+		archiveDirectory += TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%Y");
+		archiveFile = TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%m_%d") +
 			archiveFileExtension;
 	}
 
@@ -175,15 +174,67 @@ bool Configuration::LoadFromFile(const std::string & fileLocation,
 	return true;
 }
 
+// Setters
+void Configuration::SetTimestamp(const std::time_t timestamp)
+{
+	constructTimeStamp = timestamp;
+}
+
+// Getters
+bool Configuration::IsValid() const
+{
+	return isValid;
+}
+std::time_t Configuration::GetTimestamp() const
+{
+	return constructTimeStamp;
+}
+std::string Configuration::GetURL() const
+{
+	return fetchURL;
+}
+unsigned int Configuration::GetFetchTimeOut() const
+{
+	return fetchTimeoutMs;
+}
+bool Configuration::WriteOnFailure() const
+{
+	return writeOnFailure;
+}
+std::string Configuration::GetArchiveDirectory() const
+{
+	return archiveDirectory;
+}
+std::string Configuration::GetArchiveFilePath() const
+{
+	return archiveDirectory + archiveFile;
+}
+std::string Configuration::GetErrorMsg() const
+{
+	return errorMsg;
+}
+
 Configuration::Configuration()
-: fetchTimeoutMs(5000),
+: constructTimeStamp(0),
+fetchTimeoutMs(5000),
 writeOnFailure(false),
 isValid(false)
 {
 }
 
 Configuration::Configuration(const std::string & configurationFile)
-: fetchTimeoutMs(5000),
+: constructTimeStamp(clock()),
+fetchTimeoutMs(5000),
+writeOnFailure(false),
+isValid(false)
+{
+	LoadFromFile(configurationFile);
+}
+
+Configuration::Configuration(const std::string & configurationFile,
+	const std::time_t timestamp)
+: constructTimeStamp(timestamp),
+fetchTimeoutMs(5000),
 writeOnFailure(false),
 isValid(false)
 {
