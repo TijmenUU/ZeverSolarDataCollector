@@ -1,8 +1,14 @@
 #ifndef FILEUTILS_HPP
 #define FILEUTILS_HPP
-#pragma once
 
 #include <string>
+
+/*
+	A small helper class that abstracts the Windows and Linux file API
+	differences. The permissions supplied in the functions are thus not used
+	on Windows platforms, but are there for easy compatability between the
+	platform specific implementations
+*/
 
 namespace FileUtils
 {

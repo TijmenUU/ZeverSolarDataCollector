@@ -1,9 +1,16 @@
 #ifndef ZEVERDATA_HPP
 #define ZEVERDATA_HPP
-#pragma once
 
 #include <ctime>
 #include <string>
+
+/*
+	This class holds all the data retrieved from the Zeverlution combox /
+	Zeverlution Sxxxx smart inverters / ZeverSolar box.
+
+	For output formatting it uses a timestamp to log the datetime alongside the
+	watts and kilowatts.
+*/
 
 class ZeverData
 {
@@ -40,6 +47,8 @@ public:
 	std::string GetErrorMsg() const { return errorMsg; }
 	// Returns a space seperated local iso datetime (not the fetched datatime),
 	// currentPower and powerToday string
+	// Consider using the same timestamp as the configuration file, see its
+	// getters for it
 	std::string GetOutputStr(const std::time_t & timestamp,
 		const unsigned int collumnPadding = 8U) const;
 	// Parses the data string coming from the zeverlution home.cgi webpage

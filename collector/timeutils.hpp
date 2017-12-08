@@ -1,14 +1,18 @@
 #ifndef TIMEUTILS_HPP
 #define TIMEUTILS_HPP
-#pragma once
 
 #include <ctime>
 #include <string>
 
+/*
+	This is a small set of functions that help with formatting time
+*/
+
 namespace TimeUtils
 {
-	// Length does not equal the format necessarily! String will not be equal
-	// to length necessarily
+	// Creates a string using the ctime function strftime. This is then resized
+	// and converted to a string object. The length argument specifies the
+	// buffer size to be passed to strftime, not the resulting length
 	std::string GetFormattedTimeStr(const std::time_t & timestamp,
 		const char * format,
 		const size_t length = 64U);
