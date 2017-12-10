@@ -15,15 +15,17 @@ enum class ConfigurationTag
 	FETCHURL,
 	FETCHTIMEOUT,
 	WRITEZERO,
-	ARCHIVELOCATION,
+	ARCHIVEDIRECTORY,
+	ARCHIVEFILENAME,
 	ARCHIVEFILEEXTENSION
 };
 
-const std::array<const std::string, 5> cConfigurationTags = {
+const std::array<const std::string, 6> cConfigurationTags = {
 	"fetchURL",
 	"fetchTimeout",
 	"writeZeroOnFailedFetch",
-	"archiveLocation",
+	"archiveDirectory",
+	"archiveFilename",
 	"archiveFileExtension"
 };
 
@@ -78,7 +80,12 @@ bool Configuration::Validate()
 	}
 	if(archiveDirectory.size() == 0)
 	{
-		errorMsg = "Missing archive path in configuration file.";
+		errorMsg = "Missing archive directory in configuration file.";
+		return false;
+	}
+	if(archiveFile.size() == 0)
+	{
+		errorMsg = "Missing archive filename.";
 		return false;
 	}
 	return true;
@@ -90,24 +97,27 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 
 	std::ifstream input;
 	input.open(fileLocation);
+	bool filenameSpecified = false;
+	std::string archiveFileExtension;
 	if(input.is_open())
 	{
 		while(input.good())
 		{
 			std::string rawLine;
+
 			std::getline(input, rawLine);
 			if(rawLine.size() < 1 || rawLine[0] == cCommentSymbol)
 			{
 				continue;
 			}
 
-			std::stringstream line;
-			line.str(rawLine);
-			line >> std::skipws; // ignore whitespaces
-
-			std::string tagstr, valuestr;
-			if(line >> tagstr && line >> valuestr)
+			auto splitPos = rawLine.find(' ');
+			if(splitPos != std::string::npos)
 			{
+				std::string tagstr = rawLine.substr(0, splitPos);
+				++splitPos;
+				std::string valuestr = rawLine.substr(splitPos, rawLine.size());
+
 				auto tag = GetTag(tagstr);
 				switch(tag)
 				{
@@ -123,8 +133,13 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 					writeOnFailure = GetBinaryValue(valuestr);
 					break;
 
-					case ConfigurationTag::ARCHIVELOCATION:
+					case ConfigurationTag::ARCHIVEDIRECTORY:
 					archiveDirectory = valuestr;
+					break;
+
+					case ConfigurationTag::ARCHIVEFILENAME:
+					archiveFile = valuestr;
+					filenameSpecified = true;
 					break;
 
 					case ConfigurationTag::ARCHIVEFILEEXTENSION:
@@ -148,32 +163,78 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 		return false;
 	}
 
+	if(!filenameSpecified)
+	{
+		archiveDirectory += TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%Y");
+		archiveFile = TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%m_%d") +
+			archiveFileExtension;
+	}
+
 	isValid = Validate();
 	return true;
 }
 
-std::string Configuration::GetArchiveDirectory(const std::time_t & timestamp) const
+// Setters
+void Configuration::SetTimestamp(const std::time_t timestamp)
 {
-	return archiveDirectory + TimeUtils::GetFormattedTimeStr(timestamp, "%Y");
+	constructTimeStamp = timestamp;
 }
 
-std::string Configuration::GetArchiveFilePath(const std::time_t & timestamp) const
+// Getters
+bool Configuration::IsValid() const
 {
-	return GetArchiveDirectory(timestamp) +
-	'/' +
-	TimeUtils::GetFormattedTimeStr(timestamp, "%m_%d") +
-	archiveFileExtension;
+	return isValid;
+}
+std::time_t Configuration::GetTimestamp() const
+{
+	return constructTimeStamp;
+}
+std::string Configuration::GetURL() const
+{
+	return fetchURL;
+}
+unsigned int Configuration::GetFetchTimeOut() const
+{
+	return fetchTimeoutMs;
+}
+bool Configuration::WriteOnFailure() const
+{
+	return writeOnFailure;
+}
+std::string Configuration::GetArchiveDirectory() const
+{
+	return archiveDirectory;
+}
+std::string Configuration::GetArchiveFilePath() const
+{
+	return archiveDirectory + archiveFile;
+}
+std::string Configuration::GetErrorMsg() const
+{
+	return errorMsg;
 }
 
 Configuration::Configuration()
-: fetchTimeoutMs(5000),
+: constructTimeStamp(0),
+fetchTimeoutMs(5000),
 writeOnFailure(false),
 isValid(false)
 {
 }
 
 Configuration::Configuration(const std::string & configurationFile)
-: fetchTimeoutMs(5000),
+: constructTimeStamp(clock()),
+fetchTimeoutMs(5000),
+writeOnFailure(false),
+isValid(false)
+{
+	LoadFromFile(configurationFile);
+}
+
+Configuration::Configuration(const std::string & configurationFile,
+	const std::time_t timestamp)
+: constructTimeStamp(timestamp),
+fetchTimeoutMs(5000),
 writeOnFailure(false),
 isValid(false)
 {
