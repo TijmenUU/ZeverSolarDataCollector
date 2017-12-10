@@ -13,14 +13,15 @@ const std::string cConfigFile = "collecting.conf";
 int main(int argc, char ** argv)
 {
 	Configuration config;
-	const std::time_t now = time(0);
+	config.SetTimestamp(time(nullptr));
+
 	if(argc > 1)
 	{
-		config.LoadFromFile(argv[1], now);
+		config.LoadFromFile(argv[1]);
 	}
 	else
 	{
-		config.LoadFromFile(cConfigFile, now);
+		config.LoadFromFile(cConfigFile);
 	}
 
 	if(!config.IsValid())
@@ -46,23 +47,23 @@ int main(int argc, char ** argv)
 		}
 	}
 	// Check file (YEAR/MM_DD)
-	archiveFile = config.GetArchiveFilePath();
-	if(!FileUtils::Exists(archiveFile))
+	const auto archiveFilePath = config.GetArchiveFilePath();
+	if(!FileUtils::Exists(archiveFilePath))
 	{
-		if(!FileUtils::CreateFile(archiveFile))
+		if(!FileUtils::CreateFile(archiveFilePath))
 		{
-			throw std::runtime_error("Cannot create file " + archiveFile);
+			throw std::runtime_error("Cannot create file " + archiveFilePath);
 		}
 	}
 
 	// Write results
 	std::ofstream outputFile;
-	outputFile.open(archiveFile, std::fstream::out | std::fstream::app);
+	outputFile.open(archiveFilePath, std::fstream::out | std::fstream::app);
 	if(!outputFile.is_open())
 	{
-		throw std::runtime_error("Cannot access " + archiveFile + " for writing.");
+		throw std::runtime_error("Cannot access " + archiveFilePath + " for writing.");
 	}
-	outputFile << data.GetOutputStr(now);
+	outputFile << data.GetOutputStr(config.GetTimestamp());
 	outputFile.close();
 
 	return 0;

@@ -32,6 +32,8 @@ public:
 	// sets errorMsg, therefore not const
 	bool Validate();
 
+	// Make sure to set the timestamp before calling this! See SetTimestamp or
+	// use the appropiate constructor
 	bool LoadFromFile(const std::string & fileLocation);
 
 	// Setters

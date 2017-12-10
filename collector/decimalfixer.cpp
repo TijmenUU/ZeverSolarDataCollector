@@ -93,7 +93,6 @@ int main(int argc, char ** argv)
 	const unsigned int cDayInUnixTime = 86400; // in seconds
 
 	std::string fileToFix;
-	std::time_t timestamp;
 	Configuration config;
 	if(argc == 3 && argv[1][0] == '-')
 	{
@@ -104,26 +103,11 @@ int main(int argc, char ** argv)
 			break;
 
 			case 't':
-			timestamp = time(nullptr);
-			config.LoadFromFile(argv[2], timestamp);
-			if(!config.IsValid())
-			{
-				throw std::runtime_error(config.GetErrorMsg());
-			}
-
-			fileToFix = config.GetArchiveFilePath(timestamp);
+			config.SetTimestamp(time(nullptr));
 			break;
 
 			case 'y':
-			timestamp = time(nullptr) - cDayInUnixTime;
-			config.LoadFromFile(argv[2], timestamp);
-
-			if(!config.IsValid())
-			{
-				throw std::runtime_error(config.GetErrorMsg());
-			}
-
-			fileToFix = config.GetArchiveFilePath(timestamp);
+			config.SetTimestamp(time(nullptr) - cDayInUnixTime);
 			break;
 
 			default:
@@ -137,6 +121,16 @@ int main(int argc, char ** argv)
 		throw std::runtime_error(
 			"Supported flags are -s(specific file) [filepath], -t(today) [configur"
 			"ation file path] and -y(yesterday) [configuration file path].");
+	}
+
+	if(fileToFix.size() < 1)
+	{
+		config.LoadFromFile(argv[2]);
+		if(!config.IsValid())
+		{
+			throw std::runtime_error(config.GetErrorMsg());
+		}
+		fileToFix = config.GetArchiveFilePath();
 	}
 
 	std::vector<std::string> fileContents;
