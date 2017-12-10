@@ -30,6 +30,8 @@ The decimalfixer program can be called in three ways:
 - `decimalfixer -t /path/to/your/configuration/file.conf` to fix today's file (whatever file belongs to the current date)
 - `decimalfixer -y /path/to/your/configuration/file.conf` to fix yesterday's file (current date subtracted by 1 day)
 
+**NOTE:** using the decimalfixer utility and a single archiving file is not a good idea!
+
 # Data Correction on Linux
 Make it using `make decimalfixer` and add it, for instance, to your crontab.
 
