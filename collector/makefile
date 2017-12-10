@@ -2,7 +2,7 @@
 CC = g++
 DEBUG = -g
 CFLAGS = -Wall -c -std=c++11 $(DEBUG)
-LFLAGS = -Wall $(DEBUG)
+LFLAGS = -Wall
 
 # Build specific settings
 COLLECTORBUILDNAME = collector
@@ -17,22 +17,22 @@ DECIMALFIXOBJS = timeutils.o configuration.o decimalfixer.o
 DECIMALFIXLIBS =
 WIN_DECIMALFIXLIBS =
 
-fileutils.o: fileutils.hpp
+fileutils.o: fileutils.hpp fileutils.cpp
 	$(CC) $(CFLAGS) fileutils.cpp
 
-timeutils.o: timeutils.hpp
+timeutils.o: timeutils.hpp timeutils.cpp
 	$(CC) $(CFLAGS) timeutils.cpp
 
-configuration.o: configuration.hpp timeutils.hpp
+configuration.o: timeutils.o configuration.hpp configuration.cpp
 	$(CC) $(CFLAGS) configuration.cpp
 
-zeverdata.o: zeverdata.hpp timeutils.hpp
+zeverdata.o: timeutils.o zeverdata.hpp zeverdata.cpp
 	$(CC) $(CFLAGS) zeverdata.cpp
 
-collector.o: fileutils.hpp configuration.hpp zeverdata.hpp
+collector.o: fileutils.o configuration.o zeverdata.o collector.cpp
 	$(CC) $(CFLAGS) collector.cpp
 
-decimalfixer.o : configuration.hpp
+decimalfixer.o : configuration.o decimalfixer.cpp
 	$(CC) $(CFLAGS) decimalfixer.cpp
 
 collector: $(COLLECTOROBJS)
