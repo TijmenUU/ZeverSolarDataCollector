@@ -5,7 +5,7 @@ const chartHeight = 600; // in px
 /* Strings */
 const chartTitle = "Overzicht periode";
 const noDataMsg = 'Er is geen data om te laten zien voor de geselecteerde dagen.'; // No data available for the selected day
-const helpMsg = 'Selecteer een begin en eind dag voor de weer te geven data en druk op Laad Data';
+const helpMsg = 'Selecteer een begin en eind dag voor de weer te geven data en druk op Laad Data.';
 
 window.onload = OnLoad;
 
@@ -66,6 +66,7 @@ async function TryLoad() {
 
     if (statistics.kilowatthour.length > 0) {
         statistics.average_kilowatthour /= statistics.kilowatthour.length;
+        statistics.average_kilowatthour = Math.round(statistics.average_kilowatthour * 10) / 10;
         DisplayData(statistics);
     }
     else
@@ -93,7 +94,7 @@ function DisplayData(statistics) {
 
 function UpdateTiles(stats)
 {
-    document.getElementById('kilowatt-stats').innerHTML = "Hoogste dagopbrengst gemeten was op " + moment(stats.max_kilowatthour_date).format("DD-MM-YYYY") + " met een waarde van " + stats.max_kilowatthour + " kilowatt/uur. De gemiddelde opbrengst over deze periode is " + stats.average_kilowatthour + " kilowatt/uur.";
+    document.getElementById('kilowatt-stats').innerHTML = "Hoogste dagopbrengst gemeten was op " + moment(stats.max_kilowatthour_date).format("DD-MM-YYYY") + " met een waarde van " + stats.max_kilowatthour + " kilowatt/uur. De gemiddelde opbrengst over deze periode is " + stats.average_kilowatthour.toFixed(1) + " kilowatt/uur.";
 
     document.getElementById('watt-stats').innerHTML = "Hier is nog niks te zien."; // debug
 

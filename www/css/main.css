@@ -8,6 +8,10 @@
 	margin-left: 10px;
 }
 
+#chart-col {
+	height: 601px;
+}
+
 .tile {
 	width: 100%;
 	height: 100%;

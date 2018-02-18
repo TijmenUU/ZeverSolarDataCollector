@@ -113,6 +113,7 @@ function DrawChart(stats) {
         xaxis:
             {
                 fixedrange: true,
+                tickangle: -90,
                 dtick: 20
             },
         yaxis:
