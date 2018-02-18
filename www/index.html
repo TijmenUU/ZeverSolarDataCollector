@@ -1,25 +1,32 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>SolarPi</title>
-		<script src="js/jquery.min.js"></script>
-		<script src="js/plotly.min.js"></script>
-		<script src="js/moment.min.js"></script>
 
-		<link rel="icon" type="image/png" href="img/favicon.png">
-		<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-		<link rel="stylesheet" type="text/css" href="css/index.css">
-	</head>
+<head>
+	<title>SolarPi | Dag statistieken</title>
+
+	<script src="js/jquery.min.js"></script>
+	<script src="js/plotly.min.js"></script>
+	<script src="js/moment.min.js"></script>
+
+	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
 <body>
-	<div class="container">
-		<div class="row no-gutters">
+	<main class="container">
+
+		<!-- Graph -->
+		<section class="row no-gutters">
 			<div class="col" id="chart-col">
 			</div>
-		</div>
-		<div class="row no-gutters">
+		</section>
+
+		<!-- Day navigation -->
+		<nav class="row no-gutters">
 			<div class="col">
 				<button class="function-tile purple" onclick="TryPreviousDay()">
-					<img class="function-tile-img" src="/img/arrow_next.png"></img>
+					<img class="function-tile-img" src="img/arrow_next.png"></img>
 				</button>
 			</div>
 			<div class="col">
@@ -32,39 +39,52 @@
 			</div>
 			<div class="col">
 				<button class="function-tile purple" onclick="TryNextDay()">
-					<img class="function-tile-img" src="/img/arrow_previous.png"></img>
+					<img class="function-tile-img" src="img/arrow_previous.png"></img>
 				</button>
 			</div>
-		</div>
-		<div class="row no-gutters">
+		</nav>
+
+		<!-- Information tiles -->
+		<section class="row no-gutters">
 			<div class="col">
 				<div class="tile green">
-					<h3 class="title">Productie</h3>
+					<h3 class="title">
+						Productie
+					</h3>
 					<p id="powerProductionStats"></p>
 				</div>
 			</div>
 			<div class="col">
 				<div class="tile orange">
-					<h3 class="title">Opbrengst</h3>
+					<h3 class="title">
+						Opbrengst
+					</h3>
 					<p id="powerProduced"></p>
 				</div>
 			</div>
-		</div>
-		<div class="row no-gutters">
+		</section>
+
+		<section class="row no-gutters">
 			<div class="col">
 				<div class="tile blue">
-					<h3 class="title">Activiteit</h3>
+					<h3 class="title">
+						Activiteit
+					</h3>
 					<p id="activityStats"></p>
 				</div>
 			</div>
 			<div class="col">
 				<div class="tile red">
-					<h3 class="title">Download</h3>
+					<h3 class="title">
+						Download
+					</h3>
 					<div class="row">
 						<div class="col">
 							<a id="csvDownload" href="#">
 								<div class="small-tile">
-									<p>CSV</p>
+									<p>
+										CSV
+									</p>
 								</div>
 							</a>
 						</div>
@@ -87,11 +107,14 @@
 					</div>
 				</div>
 			</div>
-		</div>
-	</div>
+		</section>
+	</main>
+
 	<!--These are loaded later due depending on the body div's existing-->
-	<script src="js/popper.min.js"></script> <!-- Respect the load order -->
+	<script src="js/popper.min.js"></script>
+	<!-- Respect the load order -->
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/main.js"></script>
 </body>
+
 </html>
