@@ -4,14 +4,16 @@
 const chartTitle = 'Overzicht'; // Overview
 const yaxis1Title = 'Momentopname'; // Production Snapshot
 const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
-const tileNoDataMsg = 'Er is nog te weinig data verzameld.'; // Not enough data
-const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald voor de datum '; // Data could not be fetched from:
 const alertTryNextDayFailMsg = "De data voor de volgende dag kon niet worden gevonden op de server.";
 const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden gevonden op de server.";
-const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
-window.onload = GetDateFile(moment(), DisplayData, DisplayError);
+window.onload = OnLoad;
+
+function OnLoad()
+{
+    GetDateFile(moment(), DisplayData, DisplayError);
+}
 
 function TryLoadDate()
 {
@@ -33,7 +35,6 @@ function TryNextDay()
 
 function DisplayError(momentDate)
 {
-	alert(alertNoDataMsg + momentDate.format("DD-MM-YYYY"));
 	DrawChart(null);
 	DrawTiles(null);
     InitDownloads(null);
@@ -66,7 +67,7 @@ function DrawChart(stats)
 {
     if(stats === undefined || stats === null || stats.date.length < 2)
     {
-        document.getElementById("chart-col").innerHTML = chartNoDataMsg;
+        document.getElementById("chart-col").innerHTML = noDataMsg;
         return;
     }
 
@@ -151,9 +152,9 @@ function DrawTiles(stats)
 {
 	if(stats === undefined || stats === null || stats.date.length < 2)
 	{
-		document.getElementById('kilowatt-stats').innerHTML = tileNoDataMsg;
-		document.getElementById('watt-stats').innerHTML = tileNoDataMsg;
-		document.getElementById('activity-stats').innerHTML = tileNoDataMsg;
+		document.getElementById('kilowatt-stats').innerHTML = noDataMsg;
+		document.getElementById('watt-stats').innerHTML     = noDataMsg;
+		document.getElementById('activity-stats').innerHTML = noDataMsg;
 		return;
 	}
 
