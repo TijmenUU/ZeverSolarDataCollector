@@ -5,84 +5,88 @@ const dataDir = 'solarpanel/';
 const archiveFile = 'YYYY/MM_DD[.txt]';
 const chartHeight = 600; // in px
 
-async function CheckDateFile(momentDate)
-{
+async function CheckDateFile(momentDate) {
 	const path = dataDir + momentDate.format(archiveFile);
 
-	var request = new Request(path, { method: "HEAD"});
+	var request = new Request(path, { method: "HEAD" });
 	const response = await fetch(request);
-	
-	if(response.ok)
-	{
+
+	if (response.ok) {
 		return true;
 	}
 	return false;
 }
 
-async function GetDateFile(momentDate, successMethod, errorMethod)
-{
+async function GetDateFile(momentDate, successMethod, errorMethod) {
 	const path = dataDir + momentDate.format(archiveFile);
 
 	var request = new Request(path);
 	const response = await fetch(request);
 
-	if(response.ok)
-	{
+	if (response.ok) {
 		let text;
-		try
-		{
+		try {
 			text = await response.text();
 			successMethod(text);
 		}
-		catch(error)
-		{
+		catch (error) {
 			errorMethod(momentDate);
 		}
 	}
-	else
-	{
+	else {
 		errorMethod(momentDate);
 	}
 }
 
-function ParseData(datastr)
-{
-    var statistics = {
-        watt: [],
-        kilowatthour: [],
-        date: [],
-        max_watt: 10,
-        max_kilowatthour: 10
-    };
-    
+function ParseLine(linestr) {
+	var linedata = {
+		watt: 0,
+		kilowatthour: 0.0,
+		date: ""
+	};
+
+	if (linestr === undefined || linestr === null || linestr.length === 0) {
+		return linedata;
+	}
+
+	var values = linestr.split(/\s+/);
+
+	if (values === null || values.length === 0) {
+		return linedata;
+	}
+
+	linedata.date = values[0];
+	linedata.watt = parseInt(values[1]);
+	linedata.kilowatthour = parseFloat(values[2]);
+
+	return linedata;
+}
+
+function ParseData(datastr) {
+	var statistics = {
+		watt: [],
+		kilowatthour: [],
+		date: [],
+		max_watt: 10,
+		max_kilowatthour: 10
+	};
+
 	var lines = datastr.split('\n');
-	for(var i = 0; i < lines.length; ++i)
-	{
-		if(lines[i].length === 0)
-		{
+	for (var i = 0; i < lines.length; ++i) {
+		var linedata = ParseLine(lines[i]);
+		if (linedata.watt === 0 && linedata.kilowatthour === 0.0) {
 			continue;
 		}
-		var values = lines[i].split(/\s+/);
-		if(values !== null)
-		{
-			var cummulativeValue = parseFloat(values[2]);
-			var powerValue = parseInt(values[1]);
-			if(cummulativeValue === 0 && powerValue === 0)
-			{
-				continue;
-			}
-			statistics.watt.push(powerValue);
-			statistics.kilowatthour.push(cummulativeValue);
-			statistics.date.push(values[0]);
 
-			if(powerValue > statistics.max_watt)
-			{
-				statistics.max_watt = powerValue;
-			}
-			if(cummulativeValue > statistics.max_kilowatthour)
-			{
-				statistics.max_kilowatthour = cummulativeValue;
-			}
+		statistics.watt.push(linedata.watt);
+		statistics.kilowatthour.push(linedata.kilowatthour);
+		statistics.date.push(linedata.date);
+
+		if (linedata.watt > statistics.max_watt) {
+			statistics.max_watt = linedata.watt;
+		}
+		if (linedata.kilowatthour > statistics.max_kilowatthour) {
+			statistics.max_kilowatthour = linedata.kilowatthour;
 		}
 	}
 
