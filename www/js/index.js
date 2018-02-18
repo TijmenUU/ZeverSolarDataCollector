@@ -1,9 +1,11 @@
 "use strict";
 
+const chartHeight = 600; // in px
+
 /* Strings */
 const chartTitle = 'Overzicht'; // Overview
 const yaxis1Title = 'Momentopname'; // Production Snapshot
-const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
+const yaxis2Title = 'Totale Obrengst'; // Total production
 const alertTryNextDayFailMsg = "De data voor de volgende dag kon niet worden gevonden op de server.";
 const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden gevonden op de server.";
 const noDataMsg = 'Er is geen data om te laten zien voor de geselecteerde dag.'; // No data available for the selected day
@@ -62,9 +64,15 @@ function DrawChart(stats) {
         return;
     }
 
+    var timestamps = [];
+    for(var i = 0; i < stats.date.length; ++i)
+    {
+        timestamps.push(moment(stats.date[i]).format("HH:mm"));
+    }
+
     document.getElementById("chart-col").innerHTML = ""; // clear possible error msg
     var trace1 = {
-        x: stats.date,
+        x: timestamps,
         y: stats.watt,
         name: 'Watt',
         line:
@@ -77,7 +85,7 @@ function DrawChart(stats) {
     };
 
     var trace2 = {
-        x: stats.date,
+        x: timestamps,
         y: stats.kilowatthour,
         name: 'KWh',
         line:
@@ -105,19 +113,19 @@ function DrawChart(stats) {
         xaxis:
             {
                 fixedrange: true,
-                //dtick: 20,
+                dtick: 20
             },
         yaxis:
             {
                 title: yaxis1Title + ' (Watt)',
-                range: [0, stats.max_watt],
+                range: [0, stats.max_watt + 100],
                 fixedrange: true,
                 showgrid: true,
             },
         yaxis2:
             {
                 title: yaxis2Title + ' (KWh)',
-                range: [0, stats.max_kilowatthour],
+                range: [0, Math.ceil(stats.max_kilowatthour + 1.0)],
                 fixedrange: true,
                 overlaying: 'y',
                 side: 'right',
@@ -132,9 +140,7 @@ function DrawChart(stats) {
             },
     };
 
-    var stats = [trace1, trace2];
-
-    Plotly.newPlot('chart-col', stats, layout, { displayModeBar: false });
+    Plotly.newPlot('chart-col', [trace1, trace2], layout, { displayModeBar: false });
 
     window.onresize = UpdateChartWidth;
 }

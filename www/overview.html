@@ -13,16 +13,14 @@
     <link rel="icon" type="image/png" href="img/favicon.png">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/overview.css">
 </head>
 
 <body>
     <main class="container">
         <nav class="top-nav">
-            <a href="index.html">
-                Dag overzicht
-            </a>
-            <a href="overview.html">
-                Langetermijn overzicht
+            <a class="top-nav-btn" href="index.html">
+                Overzicht per dag
             </a>
         </nav>
 
@@ -35,14 +33,14 @@
         <!-- Display range -->
         <nav class="row no-gutters">
             <div class="col">
-                <div class="tile purple">
+                <div class="tile purple centered-element">
                     <h3 class="title">
                         Vanaf
                     </h3>
                     <form class="function-tile-form">
                         <input class="function-tile-field" id="start-chartdate" type="date">
                         <input class="function-tile-field" id="end-chartdate" type="date">
-                        <button class="function-tile-btn" onclick="TryLoad()">
+                        <button class="function-tile-btn" type="button" onclick="TryLoad()">
                             Laad data
                         </button>
                     </form>
@@ -58,7 +56,7 @@
                     <h3 class="title">
                         Productie
                     </h3>
-                    <p id="powerProductionStats"></p>
+                    <p id="kilowatt-stats"></p>
                 </div>
             </div>
             <div class="col">
@@ -66,7 +64,7 @@
                     <h3 class="title">
                         Opbrengst
                     </h3>
-                    <p id="powerProduced"></p>
+                    <p id="watt-stats"></p>
                 </div>
             </div>
         </section>

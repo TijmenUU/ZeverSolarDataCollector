@@ -3,7 +3,6 @@
 const MaxSolarPowerWatts = 3000;
 const dataDir = 'solarpanel/';
 const archiveFile = 'YYYY/MM_DD[.txt]';
-const chartHeight = 600; // in px
 
 async function CheckDateFile(momentDate) {
 	const path = dataDir + momentDate.format(archiveFile);
@@ -22,6 +21,8 @@ async function GetDateFile(momentDate, successMethod, errorMethod) {
 
 	var request = new Request(path);
 	const response = await fetch(request);
+
+	//console.log("fetch " + path);// debug
 
 	if (response.ok) {
 		let text;
