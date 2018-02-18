@@ -2,6 +2,8 @@
 <html>
 
 <head>
+	<meta charset="utf-8">
+
 	<title>SolarPi | Dag statistieken</title>
 
 	<script src="js/jquery.min.js"></script>
@@ -32,7 +34,7 @@
 			<div class="col">
 				<div class="function-tile purple">
 					<form class="function-tile-form">
-						<input class="function-tile-field" id="chartdate" type="date" oninput="TryLoad()">
+						<input class="function-tile-field" id="chartdate" type="date" oninput="TryLoadDate()">
 					</form>
 				</div>
 			</div>
@@ -50,7 +52,7 @@
 					<h3 class="title">
 						Productie
 					</h3>
-					<p id="powerProductionStats"></p>
+					<p id="kilowatt-stats"></p>
 				</div>
 			</div>
 			<div class="col">
@@ -58,7 +60,7 @@
 					<h3 class="title">
 						Opbrengst
 					</h3>
-					<p id="powerProduced"></p>
+					<p id="watt-stats"></p>
 				</div>
 			</div>
 		</section>
@@ -69,7 +71,7 @@
 					<h3 class="title">
 						Activiteit
 					</h3>
-					<p id="activityStats"></p>
+					<p id="activity-stats"></p>
 				</div>
 			</div>
 			<div class="col">
@@ -114,6 +116,7 @@
 	<!-- Respect the load order -->
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/main.js"></script>
+	<script src="js/index.js"></script>
 </body>
 
 </html>
