@@ -34,20 +34,14 @@ function TryNextDay()
 function DisplayError(momentDate)
 {
 	alert(alertNoDataMsg + momentDate.format("DD-MM-YYYY"));
-	document.getElementById("chart-col").innerHTML = chartNoDataMsg;
+	DrawChart(null);
 	DrawTiles(null);
     InitDownloads(null);
-    UpdateDatePicker();
+    UpdateDatePicker(momentDate);
 }
 
 function DisplayData(data, momentDate)
 {
-    if(data === null || data === undefined || data.length === 0)
-    {
-        DisplayError(momentDate)
-        return;
-    }
-
     var statistics = ParseData(data);
 	DrawChart(statistics);
 
@@ -70,6 +64,12 @@ function UpdateChartWidth()
 
 function DrawChart(stats)
 {
+    if(stats === undefined || stats === null || stats.date.length < 2)
+    {
+        document.getElementById("chart-col").innerHTML = chartNoDataMsg;
+        return;
+    }
+
 	document.getElementById("chart-col").innerHTML = ""; // clear possible error msg
 	var trace1 = {
 		x: stats.date,

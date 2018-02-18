@@ -1,9 +1,23 @@
 "use strict";
 
 const MaxSolarPowerWatts = 3000;
-const dataDir = '/solarpanel/';
+const dataDir = 'solarpanel/';
 const archiveFile = 'YYYY/MM_DD[.txt]';
 const chartHeight = 600; // in px
+
+async function CheckDateFile(momentDate)
+{
+	const path = dataDir + momentDate.format(archiveFile);
+
+	var request = new Request(path, { method: "HEAD"});
+	const response = await fetch(request);
+	
+	if(response.ok)
+	{
+		return true;
+	}
+	return false;
+}
 
 async function GetDateFile(momentDate, successMethod, errorMethod)
 {
@@ -14,17 +28,16 @@ async function GetDateFile(momentDate, successMethod, errorMethod)
 
 	if(response.ok)
 	{
-		response.text().then(function(text) 
+		let text;
+		try
 		{
-			if(text.length > 0)
-			{
-				successMethod(text, momentDate); 
-			}
-			else
-			{
-				errorMethod(momentDate);
-			}
-		});
+			text = await response.text();
+			successMethod(text);
+		}
+		catch(error)
+		{
+			errorMethod(momentDate);
+		}
 	}
 	else
 	{
