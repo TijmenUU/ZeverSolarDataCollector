@@ -5,21 +5,30 @@ const dataDir = '/solarpanel/';
 const archiveFile = 'YYYY/MM_DD[.txt]';
 const chartHeight = 600; // in px
 
-async function GetFile(file, successMethod, errorMethod)
+async function GetDateFile(momentDate, successMethod, errorMethod)
 {
-	const path = dataDir + file;
+	const path = dataDir + momentDate.format(archiveFile);
 
 	var request = new Request(path);
 	const response = await fetch(request);
-	console.log("request method " + request.method + " url " + request.url);// debug
 
 	if(response.ok)
 	{
-		response.text().then(function(text) { successMethod(text, path); });
+		response.text().then(function(text) 
+		{
+			if(text.length > 0)
+			{
+				successMethod(text, momentDate); 
+			}
+			else
+			{
+				errorMethod(momentDate);
+			}
+		});
 	}
 	else
 	{
-		errorMethod(path);
+		errorMethod(momentDate);
 	}
 }
 

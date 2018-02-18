@@ -5,50 +5,46 @@ const chartTitle = 'Overzicht'; // Overview
 const yaxis1Title = 'Momentopname'; // Production Snapshot
 const yaxis2Title = 'Dagopbrengst Cummulatief'; // Cumulative Production
 const tileNoDataMsg = 'Er is nog te weinig data verzameld.'; // Not enough data
-const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald van:'; // Data could not be fetched from:
+const alertNoDataMsg = 'De zonnepanelen data kon niet worden opgehaald voor de datum '; // Data could not be fetched from:
 const alertTryNextDayFailMsg = "De data voor de volgende dag kon niet worden gevonden op de server.";
 const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden gevonden op de server.";
 const chartNoDataMsg = 'Er is niet genoeg data om een grafiek te laten zien.'; // Not enough data to draw a graph
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
-window.onload = GetFile(moment().format(archiveFile), DisplayData, DisplayError);
+window.onload = GetDateFile(moment(), DisplayData, DisplayError);
 
 function TryLoadDate()
 {
-	var date = document.getElementById('chartdate').value;
-
-    var file = moment(date).format(archiveFile);
-    GetFile(file, DisplayData, DisplayError);
+    var date = moment(document.getElementById('chartdate').value);
+    GetDateFile(date, DisplayData, DisplayError);
 }
 
 function TryPreviousDay()
 {
 	var date = moment(document.getElementById('chartdate').value);
-	var file = moment(date).subtract(1, 'day').format(archiveFile);
-	GetFile(file, DisplayData, DisplayError);
+	GetDateFile(date.subtract(1, 'day'), DisplayData, DisplayError);
 }
 
 function TryNextDay()
 {
 	var date = moment(document.getElementById('chartdate').value);
-    var file = moment(date).add(1, 'day').format(archiveFile);
-    GetFile(file, DisplayData, DisplayError);
+    GetDateFile(date.add(1, 'day'), DisplayData, DisplayError);
 }
 
-function DisplayError(getRequestPath)
+function DisplayError(momentDate)
 {
-	alert(alertNoDataMsg + getRequestPath);
+	alert(alertNoDataMsg + momentDate.format("DD-MM-YYYY"));
 	document.getElementById("chart-col").innerHTML = chartNoDataMsg;
 	DrawTiles(null);
     InitDownloads(null);
     UpdateDatePicker();
 }
 
-function DisplayData(data, path)
+function DisplayData(data, momentDate)
 {
     if(data === null || data === undefined || data.length === 0)
     {
-        DisplayError(path)
+        DisplayError(momentDate)
         return;
     }
 
