@@ -5,16 +5,15 @@ const chartHeight = 600; // in px
 /* Strings */
 const chartTitle = "Overzicht periode";
 const noDataMsg = 'Er is geen data om te laten zien voor de geselecteerde dagen.'; // No data available for the selected day
-const helpMsg = 'Selecteer een begin en eind dag voor de weer te geven data en druk op Laad Data.';
 
 window.onload = OnLoad;
 
 function OnLoad() {
-    UpdateDatePickers();
-    DisplayHelp();
+    InitializeDatepickers();
+    TryLoad();
 }
 
-function UpdateDatePickers() {
+function InitializeDatepickers() {
     var date = moment();
     document.getElementById('end-chartdate').value = date.format("YYYY-MM-DD");
     document.getElementById('start-chartdate').value = date.subtract(1, 'month').format("YYYY-MM-DD");
@@ -73,12 +72,6 @@ async function TryLoad() {
     {
         DisplayError();
     }
-}
-
-function DisplayHelp() {
-    document.getElementById("chart-col").innerHTML = helpMsg;
-    document.getElementById("kilowatt-stats").innerHTML = helpMsg;
-    //document.getElementById("watt-stats").innerHTML = helpMsg;
 }
 
 function DisplayError() {
@@ -153,7 +146,7 @@ function DrawChart(stats) {
         titlefont:
             {
                 //family: 'Courier New, monospace',
-                size: 36,
+                size: 25,
                 //color: '#7f7f7f'
             },
         width: width,
