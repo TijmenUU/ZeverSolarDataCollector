@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <title>SolarPi | Overzicht</title>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/plotly.min.js"></script>
+    <script src="js/moment.min.js"></script>
+
+    <link rel="icon" type="image/png" href="img/favicon.png">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+<body>
+    <main class="container">
+        <nav class="top-nav">
+            <a href="index.html">
+                Dag overzicht
+            </a>
+            <a href="overview.html">
+                Langetermijn overzicht
+            </a>
+        </nav>
+
+        <!-- Graph -->
+        <section class="row no-gutters">
+            <div class="col" id="chart-col">
+            </div>
+        </section>
+
+        <!-- Display range -->
+        <nav class="row no-gutters">
+            <div class="col">
+                <div class="tile purple">
+                    <h3 class="title">
+                        Vanaf
+                    </h3>
+                    <form class="function-tile-form">
+                        <input class="function-tile-field" id="start-chartdate" type="date">
+                        <input class="function-tile-field" id="end-chartdate" type="date">
+                        <button class="function-tile-btn" onclick="TryLoad()">
+                            Laad data
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </nav>
+
+        <!-- Information tiles -->
+        <section class="row no-gutters">
+            <div class="col">
+                <div class="tile green">
+                    <h3 class="title">
+                        Productie
+                    </h3>
+                    <p id="powerProductionStats"></p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="tile orange">
+                    <h3 class="title">
+                        Opbrengst
+                    </h3>
+                    <p id="powerProduced"></p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!--These are loaded later due depending on the body div's existing-->
+    <script src="js/popper.min.js"></script>
+    <!-- Respect the load order -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/overview.js"></script>
+</body>
+
+</html>
