@@ -16,7 +16,7 @@ function OnLoad() {
 function InitializeDatepickers() {
     var date = moment();
     document.getElementById('end-chartdate').value = date.format("YYYY-MM-DD");
-    document.getElementById('start-chartdate').value = date.subtract(1, 'month').format("YYYY-MM-DD");
+    document.getElementById('start-chartdate').value = date.subtract(2, 'week').format("YYYY-MM-DD");
 }
 
 async function TryLoad() {
@@ -153,7 +153,7 @@ function DrawChart(stats) {
         height: chartHeight,
         xaxis:
             {
-                //title: 'Datum',
+                fixedrange: true,
                 showticklabels: true,
                 tickangle: -90,
                 autotick: true
