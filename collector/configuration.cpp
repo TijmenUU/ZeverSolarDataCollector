@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <array>
 #include <fstream>
+#include <iostream>
 #include <sstream>
 
 // Settings
@@ -71,6 +72,17 @@ bool GetBinaryValue(std::string valuestr)
 	}
 }
 
+void Configuration::Print() const
+{
+	std::cout << "Configuration state:\n";
+	std::cout << "\tFetch URL <" << GetURL() << ">\n";
+	std::cout << "\tOutput <" << GetArchiveFilePath() << "\n";
+	std::cout << "\tOutput directory <" << GetArchiveDirectory() << ">\n";
+	std::cout << "\tOutput file <" << archiveFile << ">\n";
+	std::cout << "\tWrite on failed fetch? <" << (WriteOnFailure() ? "yes" : "no") << ">\n";
+	std::cout << '\n';
+}
+
 bool Configuration::Validate()
 {
 	if(fetchURL.size() == 0)
@@ -111,12 +123,11 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 				continue;
 			}
 
-			auto splitPos = rawLine.find(' ');
+			const auto splitPos = rawLine.find(' ');
 			if(splitPos != std::string::npos)
 			{
 				std::string tagstr = rawLine.substr(0, splitPos);
-				++splitPos;
-				std::string valuestr = rawLine.substr(splitPos, rawLine.size());
+				std::string valuestr = rawLine.substr(splitPos + 1, rawLine.size());
 
 				auto tag = GetTag(tagstr);
 				switch(tag)
@@ -165,7 +176,7 @@ bool Configuration::LoadFromFile(const std::string & fileLocation)
 
 	if(!filenameSpecified)
 	{
-		archiveDirectory += TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%Y");
+		archiveDirectory += TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%Y/");
 		archiveFile = TimeUtils::GetFormattedTimeStr(constructTimeStamp, "%m_%d") +
 			archiveFileExtension;
 	}

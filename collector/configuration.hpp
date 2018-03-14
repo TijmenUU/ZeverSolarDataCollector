@@ -28,6 +28,9 @@ protected:
 	std::string errorMsg;
 
 public:
+	// Prints the configuration state to console, for debugging.
+	void Print() const;
+
 	// Validates the current configuration values for not being empty
 	// sets errorMsg, therefore not const
 	bool Validate();
