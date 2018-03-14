@@ -3,11 +3,9 @@
 #include "zeverdata.hpp"
 
 #include <ctime>
-#include <stdexcept>
 #include <fstream>
+#include <stdexcept>
 #include <string>
-
-const std::string cConfigFile = "collecting.conf";
 
 /* MAIN */
 int main(int argc, char ** argv)
@@ -15,19 +13,17 @@ int main(int argc, char ** argv)
 	Configuration config;
 	config.SetTimestamp(time(nullptr));
 
-	if(argc > 1)
+	if(argc != 2)
 	{
-		config.LoadFromFile(argv[1]);
-	}
-	else
-	{
-		config.LoadFromFile(cConfigFile);
+		throw std::runtime_error("ERROR: Expected configuration file as sole launch paremeter.\n");
+		return -1;
 	}
 
-	if(!config.IsValid())
+	if(!config.LoadFromFile(argv[1]))
 	{
 		throw std::runtime_error(config.GetErrorMsg());
 	}
+	//config.Print(); // debug
 
 	ZeverData data;
 	if(!data.FetchDataFromURL(config.GetURL(), config.GetFetchTimeOut()) &&
