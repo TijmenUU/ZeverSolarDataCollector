@@ -6,9 +6,14 @@
 
 	<title>SolarPi | Dagoverzicht</title>
 
-	<script src="js/jquery.min.js"></script>
-	<script src="js/plotly.min.js"></script>
-	<script src="js/moment.min.js"></script>
+	<script src="js/jquery.min.js" defer></script>
+	<script src="js/plotly.min.js" defer></script>
+	<script src="js/moment.min.js" defer></script>
+	<script src="js/popper.min.js" defer></script>
+	<!-- Respect the load order -->
+	<script src="js/bootstrap.min.js" defer></script>
+	<script src="js/main.js" defer></script>
+	<script src="js/dayview.js" defer></script>
 
 	<link rel="icon" type="image/png" href="img/favicon.png">
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
@@ -18,7 +23,7 @@
 <body>
 	<main class="container">
 		<nav class="top-nav">
-			<a class="top-nav-btn" href="overview.html">
+			<a class="top-nav-btn" href="rangeview.html">
 				Overzicht meerdere dagen
 			</a>
 		</nav>
@@ -115,13 +120,6 @@
 			</div>
 		</section>
 	</main>
-
-	<!--These are loaded later due depending on the body div's existing-->
-	<script src="js/popper.min.js"></script>
-	<!-- Respect the load order -->
-	<script src="js/bootstrap.min.js"></script>
-	<script src="js/main.js"></script>
-	<script src="js/index.js"></script>
 </body>
 
 </html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+
+	<title>SolarPi | Overzicht meerdere dagen</title>
+
+	<script src="js/jquery.min.js" defer></script>
+	<script src="js/plotly.min.js" defer></script>
+	<script src="js/moment.min.js" defer></script>
+	<script src="js/popper.min.js" defer></script>
+	<!-- Respect the load order -->
+	<script src="js/bootstrap.min.js" defer></script>
+	<script src="js/main.js" defer></script>
+	<script src="js/rangeview.js" defer></script>
+
+	<link rel="icon" type="image/png" href="img/favicon.png">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<link rel="stylesheet" type="text/css" href="css/rangeview.css">
+</head>
+
+<body>
+	<main class="container">
+		<nav class="top-nav">
+			<a class="top-nav-btn" href="dayview.html">
+				Overzicht per dag
+			</a>
+		</nav>
+
+		<!-- Graph -->
+		<section class="row no-gutters">
+			<div class="col" id="chart-col">
+			</div>
+		</section>
+
+		<!-- Display range -->
+		<nav class="row no-gutters">
+			<div class="col">
+				<div class="tile purple centered-element">
+					<h3 class="title">
+						Selecteer een tijdsperiode
+					</h3>
+					<form class="function-tile-form">
+						<input class="function-tile-field" id="start-chartdate" type="date">
+						<input class="function-tile-field" id="end-chartdate" type="date">
+						<button class="function-tile-btn" type="button" onclick="TryLoad()">
+							Laad data
+						</button>
+					</form>
+
+				</div>
+			</div>
+		</nav>
+
+		<!-- Information tiles -->
+		<section class="row no-gutters">
+			<div class="col">
+				<div class="tile green">
+					<h3 class="title">
+						Productie
+					</h3>
+					<p id="kilowatt-stats"></p>
+				</div>
+			</div>
+			<div class="col">
+				<div class="tile orange">
+					<h3 class="title">
+						Opbrengst
+					</h3>
+					<p id="watt-stats"></p>
+				</div>
+			</div>
+		</section>
+	</main>
+</body>
+
+</html>
