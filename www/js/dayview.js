@@ -11,7 +11,8 @@ const alertTryPreviousDayFailMsg = "De data voor de dag hiervoor kon niet worden
 const noDataMsg = 'Er is geen data om te laten zien voor de geselecteerde dag.'; // No data available for the selected day
 const cvsHeader = 'tijd, momentopname in watt, cummulatieve opbrengst in kilowatt/uur'; // time, production snapshot, cumulative production in kilowatt/hour
 
-window.onload = OnLoad;
+window.addEventListener('load', OnLoad);
+window.addEventListener('resize', UpdateChartWidth);
 
 function OnLoad() {
 	GetDateFile(moment(), DisplayData, DisplayError);
@@ -141,8 +142,6 @@ function DrawChart(stats) {
 	};
 
 	Plotly.newPlot('chart-col', [trace1, trace2], layout, { displayModeBar: false });
-
-	window.onresize = UpdateChartWidth;
 }
 
 function DrawTiles(stats) {

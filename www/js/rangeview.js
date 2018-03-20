@@ -6,7 +6,8 @@ const chartHeight = 600; // in px
 const chartTitle = "Overzicht periode";
 const noDataMsg = 'Er is geen data om te laten zien voor de geselecteerde dagen.'; // No data available for the selected day
 
-window.onload = OnLoad;
+window.addEventListener('load', OnLoad);
+window.addEventListener('resize', UpdateChartWidth);
 
 function OnLoad() {
 	InitializeDatepickers();
@@ -172,8 +173,6 @@ function DrawChart(stats) {
 	};
 
 	Plotly.newPlot('chart-col', [trace1, trace2], layout, { displayModeBar: false });
-
-	window.onresize = UpdateChartWidth;
 }
 
 function DrawTiles(stats) {
