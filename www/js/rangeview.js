@@ -113,7 +113,7 @@ function DrawChart(stats) {
 		name: 'Dagopbrengst',
 		type: 'bar',
 		marker: {
-			color: '#2ECC71'
+			color: '#FB8C00'
 		}
 	};
 
@@ -129,7 +129,7 @@ function DrawChart(stats) {
 		line:
 			{
 				shape: 'spline',
-				color: '#8E44AD',
+				color: '#43A047',
 			},
 		type: 'scatter',
 		connectgaps: true

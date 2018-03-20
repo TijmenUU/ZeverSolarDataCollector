@@ -96,29 +96,29 @@
 	margin-top: 0px;
 }
 
-/* colors */
+/* colors, type 600 https://material.io/guidelines/style/color.html#color-color-palette */
 
 .blue {
 	color: #FFFFFF;
-	background-color: #3498DB;
+	background-color: #1E88E5;
 }
 
 .green {
 	color: #FFFFFF;
-	background-color: #2ECC71;
+	background-color: #43A047;
 }
 
 .orange {
 	color: #FFFFFF;
-	background-color: #F39C12;
+	background-color: #FB8C00;
 }
 
 .purple {
 	color: #FFFFFF;
-	background-color: #8E44AD;
+	background-color: #8E24AA;
 }
 
 .red {
 	color: #FFFFFF;
-	background-color: #E74C3C;
+	background-color: #E53935;
 }
