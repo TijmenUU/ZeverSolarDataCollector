@@ -18,17 +18,17 @@ function OnLoad() {
 }
 
 function TryLoadDate() {
-	var date = moment(document.getElementById('chartdate').value);
+	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date, DisplayData, DisplayError);
 }
 
 function TryPreviousDay() {
-	var date = moment(document.getElementById('chartdate').value);
+	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date.subtract(1, 'day'), DisplayData, DisplayError);
 }
 
 function TryNextDay() {
-	var date = moment(document.getElementById('chartdate').value);
+	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date.add(1, 'day'), DisplayData, DisplayError);
 }
 
@@ -40,7 +40,7 @@ function DisplayError(momentDate) {
 }
 
 function DisplayData(data, momentDate) {
-	var statistics = ParseData(data);
+	let statistics = ParseData(data);
 	DrawChart(statistics);
 
 	DrawTiles(statistics);
@@ -51,8 +51,8 @@ function DisplayData(data, momentDate) {
 }
 
 function UpdateChartWidth() {
-	var newWidth = parseInt($("#chart-col").css("width"));
-	var existingPlot = document.getElementById('chart-col');
+	let newWidth = parseInt($("#chart-col").css("width"));
+	let existingPlot = document.getElementById('chart-col');
 	if (existingPlot.layout.width !== newWidth) {
 		Plotly.relayout('chart-col', { width: newWidth /*, legend: { x: GetLegendPosX(newWidth) }*/ });
 	}
@@ -64,13 +64,13 @@ function DrawChart(stats) {
 		return;
 	}
 
-	var timestamps = [];
-	for (var i = 0; i < stats.date.length; ++i) {
+	let timestamps = [];
+	for (let i = 0; i < stats.date.length; ++i) {
 		timestamps.push(moment(stats.date[i]).format("HH:mm"));
 	}
 
 	document.getElementById("chart-col").innerHTML = ""; // clear possible error msg
-	var trace1 = {
+	let trace1 = {
 		x: timestamps,
 		y: stats.watt,
 		name: 'Watt',
@@ -83,7 +83,7 @@ function DrawChart(stats) {
 		connectgaps: true
 	};
 
-	var trace2 = {
+	let trace2 = {
 		x: timestamps,
 		y: stats.kilowatthour,
 		name: 'KWh',
@@ -97,9 +97,9 @@ function DrawChart(stats) {
 		yaxis: 'y2',
 	};
 
-	var width = parseInt($("#chart-col").css("width"));
+	let width = parseInt($("#chart-col").css("width"));
 
-	var layout = {
+	let layout = {
 		title: chartTitle + moment(stats.date[0]).format(" D MMMM, YYYY"),
 		titlefont:
 			{
@@ -153,10 +153,10 @@ function DrawTiles(stats) {
 		return;
 	}
 
-	var cummulativeWatts = 0;
-	var wattLow = stats.max_watt;
-	var wattHigh = 0;
-	for (var i = 0; i < stats.watt.length; ++i) {
+	let cummulativeWatts = 0;
+	let wattLow = stats.max_watt;
+	let wattHigh = 0;
+	for (let i = 0; i < stats.watt.length; ++i) {
 		cummulativeWatts += stats.watt[i];
 		if (stats.watt[i] < wattLow) {
 			wattLow = stats.watt[i];
@@ -182,12 +182,12 @@ function InitDownloads(stats) {
 
 	const lineEnd = '\r\n';
 	const csvSeperator = ',';
-	var csvStr = cvsHeader + lineEnd;
-	for (var i = 0; i < stats.date.length; ++i) {
+	let csvStr = cvsHeader + lineEnd;
+	for (let i = 0; i < stats.date.length; ++i) {
 		csvStr += stats.date[i] + csvSeperator + stats.watt[i] + csvSeperator + stats.kilowatthour[i] + lineEnd;
 	}
 
-	var downloadButton = document.getElementById('csvDownload');
+	let downloadButton = document.getElementById('csvDownload');
 	downloadButton.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvStr));
 	downloadButton.setAttribute('download', moment(stats.date[0]).format("YYYY_MM_DD[.csv]"))
 }

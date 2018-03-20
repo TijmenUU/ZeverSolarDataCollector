@@ -14,7 +14,7 @@ function OnLoad() {
 }
 
 function InitializeDatepickers() {
-	var date = moment();
+	let date = moment();
 	document.getElementById('end-chartdate').value = date.format("YYYY-MM-DD");
 	document.getElementById('start-chartdate').value = date.subtract(2, 'week').format("YYYY-MM-DD");
 }
@@ -23,7 +23,7 @@ async function TryLoad() {
 	const startDate = moment(document.getElementById('start-chartdate').value);
 	const endDate = moment(document.getElementById('end-chartdate').value);
 
-	var statistics = {
+	let statistics = {
 		kilowatthour: [],
 		date: [],
 		max_kilowatthour: 0.0,
@@ -31,9 +31,9 @@ async function TryLoad() {
 		average_kilowatthour: 0.0
 	};
 
-	var date = startDate;
+	let date = startDate;
 	while (date <= endDate) {
-		var data = "";
+		let data = "";
 		function setdata(datastr) {
 			data = datastr;
 		};
@@ -41,13 +41,13 @@ async function TryLoad() {
 		await GetDateFile(date, setdata, function (date) { return; });
 
 		if (data.length > 0) {
-			var lines = data.split('\n');
-			var i = lines.length - 1;
+			let lines = data.split('\n');
+			let i = lines.length - 1;
 			while (lines[i].length < 1 && i >= 0) {
 				--i;
 			}
 			if (i >= 0) {
-				var linedata = ParseLine(lines[i]);
+				let linedata = ParseLine(lines[i]);
 
 				statistics.kilowatthour.push(linedata.kilowatthour);
 				statistics.date.push(linedata.date);
@@ -92,8 +92,8 @@ function UpdateTiles(stats) {
 }
 
 function UpdateChartWidth() {
-	var newWidth = parseInt($("#chart-col").css("width"));
-	var existingPlot = document.getElementById('chart-col');
+	let newWidth = parseInt($("#chart-col").css("width"));
+	let existingPlot = document.getElementById('chart-col');
 	if (existingPlot.layout.width !== newWidth) {
 		Plotly.relayout('chart-col', { width: newWidth /*, legend: { x: GetLegendPosX(newWidth) }*/ });
 	}
@@ -102,12 +102,12 @@ function UpdateChartWidth() {
 function DrawChart(stats) {
 	document.getElementById("chart-col").innerHTML = ""; // clear possible error msg
 
-	var dates = [];
-	for (var i = 0; i < stats.date.length; ++i) {
+	let dates = [];
+	for (let i = 0; i < stats.date.length; ++i) {
 		dates.push(moment(stats.date[i]).format("DD-MM-YYYY"));
 	}
 
-	var trace1 = {
+	let trace1 = {
 		x: dates,
 		y: stats.kilowatthour,
 		name: 'Dagopbrengst',
@@ -117,12 +117,12 @@ function DrawChart(stats) {
 		}
 	};
 
-	var average_trace = [];
-	for (var i = 0; i < dates.length; ++i) {
+	let average_trace = [];
+	for (let i = 0; i < dates.length; ++i) {
 		average_trace.push(stats.average_kilowatthour);
 	}
 
-	var trace2 = {
+	let trace2 = {
 		x: dates,
 		y: average_trace,
 		name: 'Gemiddelde',
@@ -135,9 +135,9 @@ function DrawChart(stats) {
 		connectgaps: true
 	};
 
-	var width = parseInt($("#chart-col").css("width"));
+	let width = parseInt($("#chart-col").css("width"));
 
-	var layout = {
+	let layout = {
 		title: chartTitle + moment(stats.date[0]).format(" DD-MM-YYYY") + " tot en met" + moment(stats.date[stats.date.length - 1]).format(" DD-MM-YYYY"),
 		titlefont:
 			{
@@ -184,10 +184,10 @@ function DrawTiles(stats) {
 		return;
 	}
 
-	var cummulativeWatts = 0;
-	var wattLow = stats.max_watt;
-	var wattHigh = 0;
-	for (var i = 0; i < stats.watt.length; ++i) {
+	let cummulativeWatts = 0;
+	let wattLow = stats.max_watt;
+	let wattHigh = 0;
+	for (let i = 0; i < stats.watt.length; ++i) {
 		cummulativeWatts += stats.watt[i];
 		if (stats.watt[i] < wattLow) {
 			wattLow = stats.watt[i];
