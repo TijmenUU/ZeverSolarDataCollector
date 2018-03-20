@@ -83,7 +83,7 @@ function DrawChart(stats) {
 		line:
 			{
 				shape: 'linear',
-				color: '#43A047',
+				color: '#FB8C00',
 			},
 		type: 'scatter',
 		connectgaps: true
@@ -96,7 +96,7 @@ function DrawChart(stats) {
 		line:
 			{
 				shape: 'spline',
-				color: '#FB8C00',
+				color: '#43A047',
 			},
 		type: 'scatter',
 		connectgaps: true,
