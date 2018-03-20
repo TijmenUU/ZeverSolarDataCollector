@@ -19,19 +19,36 @@
 	<link rel="stylesheet" type="text/css" href="css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<link rel="stylesheet" type="text/css" href="css/rangeview.css">
+	<link rel="stylesheet" type="text/css" href="css/loader.css">
 </head>
 
 <body>
 	<main class="container">
-		<nav class="top-nav">
-			<a class="top-nav-btn" href="dayview.html">
-				Overzicht per dag
-			</a>
+		<!-- Top navigation -->
+		<nav class="row no-gutters top-nav">
+			<div class="col">
+				<a href="dayview.html">
+					<div class="tile blue">
+						<div class="top-nav-btn-content">
+							<img src="img/arrow_backward.png"></img>
+						</div>
+					</div>
+				</a>
+			</div>
 		</nav>
 
 		<!-- Graph -->
 		<section class="row no-gutters">
-			<div class="col" id="chart-col">
+			<div class="col">
+				<div id="chart-col">
+					<!-- Actual graph -->
+				</div>
+				<div id="chart-loader" class="loader">
+					<span></span>
+					<span></span>
+					<span></span>
+					<span></span>
+				</div>
 			</div>
 		</section>
 

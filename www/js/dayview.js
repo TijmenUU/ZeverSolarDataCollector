@@ -15,20 +15,24 @@ window.addEventListener('load', OnLoad);
 window.addEventListener('resize', UpdateChartWidth);
 
 function OnLoad() {
+	StartLoad();
 	GetDateFile(moment(), DisplayData, DisplayError);
 }
 
 function TryLoadDate() {
+	StartLoad();
 	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date, DisplayData, DisplayError);
 }
 
 function TryPreviousDay() {
+	StartLoad();
 	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date.subtract(1, 'day'), DisplayData, DisplayError);
 }
 
 function TryNextDay() {
+	StartLoad();
 	let date = moment(document.getElementById('chartdate').value);
 	GetDateFile(date.add(1, 'day'), DisplayData, DisplayError);
 }
@@ -38,17 +42,18 @@ function DisplayError(momentDate) {
 	DrawTiles(null);
 	InitDownloads(null);
 	UpdateDatePicker(momentDate);
+
+	EndLoad();
 }
 
 function DisplayData(data, momentDate) {
 	let statistics = ParseData(data);
 	DrawChart(statistics);
-
 	DrawTiles(statistics);
-
 	InitDownloads(statistics);
-
 	UpdateDatePicker(statistics.date[0]);
+
+	EndLoad();
 }
 
 function UpdateChartWidth() {

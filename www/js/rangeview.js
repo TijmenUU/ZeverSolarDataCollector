@@ -20,7 +20,7 @@ function InitializeDatepickers() {
 	document.getElementById('start-chartdate').value = date.subtract(2, 'week').format("YYYY-MM-DD");
 }
 
-async function TryLoad() {
+async function LoadGraph() {
 	const startDate = moment(document.getElementById('start-chartdate').value);
 	const endDate = moment(document.getElementById('end-chartdate').value);
 
@@ -74,22 +74,30 @@ async function TryLoad() {
 	}
 }
 
+function TryLoad() {
+	StartLoad();
+	LoadGraph();
+}
+
 function DisplayError() {
 	document.getElementById("chart-col").innerHTML = noDataMsg;
 	document.getElementById("kilowatt-stats").innerHTML = noDataMsg;
 	//document.getElementById("watt-stats").innerHTML = noDataMsg;
+
+	EndLoad();
 }
 
 function DisplayData(statistics) {
 	DrawChart(statistics);
 	UpdateTiles(statistics);
+
+	EndLoad();
 }
 
 function UpdateTiles(stats) {
 	document.getElementById('kilowatt-stats').innerHTML = "Hoogste dagopbrengst gemeten was op " + moment(stats.max_kilowatthour_date).format("DD-MM-YYYY") + " met een waarde van " + stats.max_kilowatthour + " kilowatt/uur. De gemiddelde opbrengst over deze periode is " + stats.average_kilowatthour.toFixed(1) + " kilowatt/uur.";
 
 	document.getElementById('watt-stats').innerHTML = "Hier is nog niks te zien."; // debug
-
 }
 
 function UpdateChartWidth() {

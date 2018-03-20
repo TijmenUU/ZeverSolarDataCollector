@@ -1,11 +1,19 @@
+a:hover {
+	text-decoration: none;
+}
+
 .top-nav {
 	text-align: center;
 	margin-top: 10px;
 	margin-bottom: 20px;
 }
 
-.top-nav-btn {
-	margin-left: 10px;
+.top-nav-btn-content {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	align-content: center;
 }
 
 .tile {
@@ -26,6 +34,10 @@
 }
 
 .tile a:link {
+	color: #FDFEFE;
+}
+
+.tile a:hover {
 	color: #FDFEFE;
 }
 
