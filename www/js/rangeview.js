@@ -138,7 +138,7 @@ function DrawChart(stats) {
 		line:
 			{
 				shape: 'spline',
-				color: '#8E24AA',
+				color: '#E53935',
 			},
 		type: 'scatter',
 		connectgaps: true
