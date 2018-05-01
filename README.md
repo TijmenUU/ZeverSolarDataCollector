@@ -17,11 +17,6 @@ The data collector can be build by using the makefile in the `/collector/` folde
 Dependencies for this program are:
 - `libcurl 7.57.0` which can be downloaded from their Github repository https://github.com/curl/curl to build it yourself or from https://curl.haxx.se/download.html if you do not want to build it yourself. Using a slightly older version should not be an issue, newer versions should be fine too. It uses the dynamically linked version so make sure the program has access to `libcurl.dll`!
 
-# Data Displaying
-Along with the data collector a small website working on the collected data can be found in the `/www/` folder of this repository. The `/www/solarpanel` folder should be replaced by an identically named symlink (or shortcut on Windows) to the configured root archive folder of the data collector program. Make sure that this symlink (or shortcut on Windows) has the name `solarpanel`!
-
-Note that the current language of the data displaying website is Dutch and not English!
-
 # Data Correction
 Zeverlution Smart Inverters currently have a strange bug that causes leading zeroes in a decimal number to be ignored. Concretely this means that the value 0.01 becomes 0.10, 3.09 becomes 3.9, etcetera. This is causing strange peaks in the logged data where sequences go from 2.80 to 2.90 to 2.10. The `decimalfixer` program attempts to correct out the most obvious wrong values, but cannot completely solve the issue without making dangerous assumptions about log interval and the maximum power that can be produced in a given interval. Therefore it can fix any of these errors surrounded by normal values with small enough differences, e.g. the listed example sequence before. It cannot solve erroneous results when the logging interval is too big or when the production capacity causes large increments between two consecutive logged data points.
 
