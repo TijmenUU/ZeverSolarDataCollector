@@ -4,6 +4,16 @@ const MaxSolarPowerWatts = 3000;
 const dataDir = 'solarpanel/';
 const archiveFile = 'YYYY/MM_DD[.txt]';
 
+function StartLoad() {
+	document.getElementById('chart-col').style.visibility = 'hidden';
+	document.getElementById('chart-loader').style.display = '';
+}
+
+function EndLoad() {
+	document.getElementById('chart-col').style.visibility = 'visible';
+	document.getElementById('chart-loader').style.display = 'none';
+}
+
 async function CheckDateFile(momentDate) {
 	const path = dataDir + momentDate.format(archiveFile);
 
