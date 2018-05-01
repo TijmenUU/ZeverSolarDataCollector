@@ -33,4 +33,8 @@
 
 # Local files
 bin/
+build/
 local.conf
+
+# vs code editor
+.vscode/
