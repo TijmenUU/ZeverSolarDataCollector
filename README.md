@@ -41,3 +41,9 @@ This program has no external dependencies.
 Make it using `make win_decimalfixer`. Use the Windows task scheduler if you want to run it at an interval.
 
 This program has no external dependencies.
+
+# Branches
+The `website-version-stale` contains a folder `www/` in the project root which contains a small website that can display the collected logs. It is no longer supported but may serve as an inspiration if you feel like creating a frontend for the data collection.
+
+`development` branch may contain unstable builds and/or broken code.
+`master` branch is your goto branch for stable builds.
