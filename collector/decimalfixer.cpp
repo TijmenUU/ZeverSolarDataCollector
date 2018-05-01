@@ -22,7 +22,8 @@ bool GetFileContents(const std::string & filepath,
 		std::string line;
 		while(std::getline(file, line))
 		{
-			out_content.push_back(line);
+			if(line.size() > 1)
+				out_content.push_back(line);
 			line.clear();
 		}
 
@@ -44,7 +45,7 @@ bool WriteFileContents(const std::string filepath,
 	{
 		for(unsigned int i = 0; i < content.size(); ++i)
 		{
-			file << content[i] << std::endl;
+			file << content[i] << '\n';
 		}
 
 		file.close();
@@ -64,13 +65,14 @@ bool WriteFileContents(const std::string filepath,
 // guarrantees about the interval or maximum power production over time
 // Neither can we fix low interval logs, logs with large kwh increments, or a
 // combination of this.
-void DecimalFix(std::vector<std::string> & content)
+bool DecimalFix(std::vector<std::string> & content)
 {
 	if(content.size() < 2)
 	{
-		return;
+		return false;
 	}
 
+	bool madeChange = false;
 	for(unsigned int i = content.size() - 1; i > 0; --i)
 	{
 		std::string & last = content[i];
@@ -83,9 +85,12 @@ void DecimalFix(std::vector<std::string> & content)
 		{
 			// fix it by swapping the two decimal values of the wrong value
 			std::swap(first[first.size() - 1], first[first.size() - 2]);
+			madeChange = true;
 			// 0.10 becomes 0.01
 		}
 	}
+
+	return madeChange;
 }
 
 int main(int argc, char ** argv)
@@ -136,15 +141,13 @@ int main(int argc, char ** argv)
 	std::vector<std::string> fileContents;
 	if(GetFileContents(fileToFix, fileContents))
 	{
-		DecimalFix(fileContents);
+		if(DecimalFix(fileContents) && !WriteFileContents(fileToFix, fileContents))
+		{
+			throw std::runtime_error("Could not write to file " + fileToFix);
+		}
 	}
 	else
 	{
 		throw std::runtime_error("Could not read file " + fileToFix);
-	}
-
-	if(!WriteFileContents(fileToFix, fileContents))
-	{
-		throw std::runtime_error("Could not write to file " + fileToFix);
 	}
 }
