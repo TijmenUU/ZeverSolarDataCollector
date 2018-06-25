@@ -4,7 +4,7 @@ Simple data collecting program for ZeverSolar's Zeverlution Sxxxx "smart" invert
 ## Data Collection
 The data collector can be build by running the makefile (`make all`) in the project root. It will create a `build` folder where it puts the newly created binaries. Move these to wherever you keep your binaries.
 
-The program `collector` outputs to stdout in the format `[datestring] current-power-in-watts current-cumulative-power-generated-in-kwh`, with the datestring being option. The launch parameters it supports are:
+The program `collector` outputs to stdout in the format `[datestring] current-power-in-watts current-cumulative-power-generated-in-kwh`, with the datestring being optional. The launch parameters it supports are:
 - `-u` mandatory parameter with the URL to the smart inverter's website (e.g. `-u http://192.168.2.23/home.cgi`). Long form is `--fetch-url`.
 - `-t` optional parameter with the timeout in milliseconds (e.g. `-t 5000`). Some smart inverters can respons really slowly. By default this is 1000 (1 second), but you can increase this value if you're experiencing a lot of intermittent failed fetches. Long form is `--fetch-timeout`.
 - `d` optional parameter with a date string that gets put before the watts and kilowatts figures in stdout (e.g. `-d 2017/01/30`). Long form is `--date-string`. You may put whatever you want here, but a datetime value seems most appropiate.
