@@ -1,28 +1,27 @@
 # ZeverSolarDataCollector
-Simple data collecting program for ZeverSolar's Zeverlution Sxxxx "smart" inverters with a network interface (referred to as "combox" by the manufacturer). It collects all the exposed data of the Zeverlution, including current power generation (watts) and today's cummulative power production (kilowatt/hours). This data is then stored per day in a text file. The included website allows for easy viewing of this collected data. Currently supported are the (GNU) Linux and Windows 10 platforms, tested on a Raspberry Pi 1 running `Linux DietPi 4.9.52+ Mon 2 Oct 2017 build`, a Lenovo Thinkpad T410 running `Linux 4.10.0-37-generic #41~16.04.1 Ubunutu SMP` and a modern desktop running `Windows 10 x64 version 1703`. Other version of Windows may be supported but haven't been tested yet.
+Simple data collecting program for ZeverSolar's Zeverlution Sxxxx "smart" inverters with a network interface (referred to as "combox" by the manufacturer). It collects all the exposed data of the Zeverlution, including current power generation (watts) and today's cummulative power production (kilowatt/hours).
 
-## Data Collection on Linux
-The data collector can be build by using the makefile in the `/collector/` folder. Build the tool using `make collector` with the existing makefile or adapt the makefile to your requirements and environment. Make your own configuration file by using `/collector.conf` as a template. Supply the program with this configuration file as a first argument when calling the program like so `./collector /path/to/your/configuration/file.conf`. Be sure that the configuration file has the correct permissions set. Use crontab to run the program at your desired interval (see `sudo crontab -u user_name -e`) or use a bash script.
+## Data Collection
+The data collector can be build by running the makefile (`make all`) in the project root. It will create a `build` folder where it puts the newly created binaries. Move these to wherever you keep your binaries.
 
-The program by default creates folders with permission 755 and files with permission 644. You can change this in the `/collector/fileutils.hpp` if you want different default permissions. If today's date is 22-11-2017 (DD-MM-YYYY) then the collector will create a folder `2017` in the configured root storage folder and within this newly created folder a file `11_22` (extension depends on what you configured, defaults to `.txt`). Any additional recordings on the same date will be appended to the created file.
+The program `collector` outputs to stdout in the format `[datestring] current-power-in-watts current-cumulative-power-generated-in-kwh`, with the datestring being option. The launch parameters it supports are:
+- `-u` mandatory parameter with the URL to the smart inverter's website (e.g. `-u http://192.168.2.23/home.cgi`). Long form is `--fetch-url`.
+- `-t` optional parameter with the timeout in milliseconds (e.g. `-t 5000`). Some smart inverters can respons really slowly. By default this is 1000 (1 second), but you can increase this value if you're experiencing a lot of intermittent failed fetches. Long form is `--fetch-timeout`.
+- `d` optional parameter with a date string that gets put before the watts and kilowatts figures in stdout (e.g. `-d 2017/01/30`). Long form is `--date-string`. You may put whatever you want here, but a datetime value seems most appropiate.
 
-See the template configuration file for all the options.
+An example implementation is provided in the bash script `/collect.sh`. This script outputs the fetched data to file structure `[path]/YYYY/MM_DD.txt`. See the script source for more details and explanation.
 
 Dependencies for this program are:
-- `libcurl4-openssl-dev` which can be installed using your package manager.
+- `libcurl` which can be installed using your package manager. It has been tested with the `openSSL` flavour, libcurl version 4.
 
 # Data Correction
 Zeverlution Smart Inverters currently have a strange bug that causes leading zeroes in a decimal number to be ignored. Concretely this means that the value 0.01 becomes 0.10, 3.09 becomes 3.9, etcetera. This is causing strange peaks in the logged data where sequences go from 2.80 to 2.90 to 2.10. The `decimalfixer` program attempts to correct out the most obvious wrong values, but cannot completely solve the issue without making dangerous assumptions about log interval and the maximum power that can be produced in a given interval. Therefore it can fix any of these errors surrounded by normal values with small enough differences, e.g. the listed example sequence before. It cannot solve erroneous results when the logging interval is too big or when the production capacity causes large increments between two consecutive logged data points.
 
-The decimalfixer program can be called in three ways:
-- `decimalfixer -s /path/to/file/you/want/fixed` to fix the specified file
-- `decimalfixer -t /path/to/your/configuration/file.conf` to fix today's file (whatever file belongs to the current date)
-- `decimalfixer -y /path/to/your/configuration/file.conf` to fix yesterday's file (current date subtracted by 1 day)
+**NOTE:** using the decimalfixer utility and logging to a single file (over multiple days) is a really bad idea! The decimalfixer program only looks at the kilowatthour values.
 
-**NOTE:** using the decimalfixer utility and a single archiving file is not a good idea!
+The decimalfixer can be build by running the makefile (`make all`) in the project root. It will create a `build` folder where it puts the newly created binaries. Move these to wherever you keep your binaries.
 
-## Data Correction on Linux
-Make it using `make decimalfixer` and add it, for instance, to your crontab.
+The decimalfixer program has one launch parameter: the file to fix. An example implementation for how to use it can be found in `/decimalfix.sh`. For more information please see its source code.
 
 This program has no external dependencies.
 

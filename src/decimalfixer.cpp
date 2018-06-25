@@ -1,10 +1,6 @@
-#include "timeutils.hpp"
-#include "configuration.hpp"
-
-#include <ctime>
+#include <cstdio>
 #include <fstream>
 #include <sstream>
-#include <stdexcept>
 #include <string>
 #include <utility> // swap
 #include <vector>
@@ -95,47 +91,15 @@ bool DecimalFix(std::vector<std::string> & content)
 
 int main(int argc, char ** argv)
 {
-	const unsigned int cDayInUnixTime = 86400; // in seconds
-
 	std::string fileToFix;
-	Configuration config;
-	if(argc == 3 && argv[1][0] == '-')
+	if(argc < 2)
 	{
-		switch(argv[1][1])
-		{
-			case 's':
-			fileToFix = argv[2];
-			break;
-
-			case 't':
-			config.SetTimestamp(time(nullptr));
-			break;
-
-			case 'y':
-			config.SetTimestamp(time(nullptr) - cDayInUnixTime);
-			break;
-
-			default:
-			throw std::runtime_error("Unknown launch parameter " +
-				std::string(argv[1]));
-			break;
-		}
+		std::fputs("Expected a filepath to the file to be checked as launch parameter.", stderr);
+		return -1;
 	}
 	else
 	{
-		throw std::runtime_error(
-			"Supported flags are -s(specific file) [filepath], -t(today) [configur"
-			"ation file path] and -y(yesterday) [configuration file path].");
-	}
-
-	if(fileToFix.size() < 1)
-	{
-		config.LoadFromFile(argv[2]);
-		if(!config.IsValid())
-		{
-			throw std::runtime_error(config.GetErrorMsg());
-		}
-		fileToFix = config.GetArchiveFilePath();
+		fileToFix = argv[1];
 	}
 
 	std::vector<std::string> fileContents;
@@ -143,11 +107,15 @@ int main(int argc, char ** argv)
 	{
 		if(DecimalFix(fileContents) && !WriteFileContents(fileToFix, fileContents))
 		{
-			throw std::runtime_error("Could not write to file " + fileToFix);
+			std::fprintf(stderr, "Could not write to file <%s>!\n", fileToFix.c_str());
+			return -1;
 		}
 	}
 	else
 	{
-		throw std::runtime_error("Could not read file " + fileToFix);
+		std::fprintf(stderr, "Could not read file <%s>!\n", fileToFix.c_str());
+		return -1;
 	}
+
+	return 0;
 }
