@@ -21,9 +21,9 @@ namespace detail
 	const std::string shortArguments("utd");
 	// Long form arguments (--outputpath, etc.)
 	const std::array<std::string, 4> longArguments = {
-		"fetchurl",
-		"fetchtimeout",
-		"datestring"
+		"fetch-url",
+		"fetch-timeout",
+		"date-string"
 	};
 
 	ParameterType ToEnum(const char argument)
