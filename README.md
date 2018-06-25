@@ -11,12 +11,6 @@ See the template configuration file for all the options.
 Dependencies for this program are:
 - `libcurl4-openssl-dev` which can be installed using your package manager.
 
-## Data Collection on Windows
-The data collector can be build by using the makefile in the `/collector/` folder. Build the tool using `make win_collector` with the existing makefile or adapt the makefile to your requirements and environment (MinGW users can use `mingw32-make` instead of `make`). Make your own configuration file by using `/collector.conf` as a template. Supply the program with this configuration file as a first argument when calling the program like so `collector.exe \path\to\your\configuration\file.conf`. Use the Windows task scheduler to call the program at your desired interval.
-
-Dependencies for this program are:
-- `libcurl 7.57.0` which can be downloaded from their Github repository https://github.com/curl/curl to build it yourself or from https://curl.haxx.se/download.html if you do not want to build it yourself. Using a slightly older version should not be an issue, newer versions should be fine too. It uses the dynamically linked version so make sure the program has access to `libcurl.dll`!
-
 # Data Correction
 Zeverlution Smart Inverters currently have a strange bug that causes leading zeroes in a decimal number to be ignored. Concretely this means that the value 0.01 becomes 0.10, 3.09 becomes 3.9, etcetera. This is causing strange peaks in the logged data where sequences go from 2.80 to 2.90 to 2.10. The `decimalfixer` program attempts to correct out the most obvious wrong values, but cannot completely solve the issue without making dangerous assumptions about log interval and the maximum power that can be produced in a given interval. Therefore it can fix any of these errors surrounded by normal values with small enough differences, e.g. the listed example sequence before. It cannot solve erroneous results when the logging interval is too big or when the production capacity causes large increments between two consecutive logged data points.
 
@@ -32,13 +26,9 @@ Make it using `make decimalfixer` and add it, for instance, to your crontab.
 
 This program has no external dependencies.
 
-## Date Correction on Windows
-Make it using `make win_decimalfixer`. Use the Windows task scheduler if you want to run it at an interval.
-
-This program has no external dependencies.
-
 # Branches
-The `website-version-stale` contains a folder `www/` in the project root which contains a small website that can display the collected logs. It is no longer supported but may serve as an inspiration if you feel like creating a frontend for the data collection.
+- `master` branch is your goto branch for stable builds.
+- `development` branch may contain unstable builds and/or broken code.
 
-`development` branch may contain unstable builds and/or broken code.
-`master` branch is your goto branch for stable builds.
+- `windows-compatible-stale` contains an older version of the project which was still build and tested for Windows systems. The master and development branch are explicitly NOT compatible with Windows.
+- `website-version-stale` contains a folder `www/` in the project root which contains a small website that can display the collected logs. It is no longer supported but may serve as an inspiration if you feel like creating a frontend for the data collection. This branch is also still Windows compatible.
