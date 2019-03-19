@@ -1,4 +1,7 @@
 # ZeverSolarDataCollector
+
+**NOTE** This project has been moved to https://git.valkendaal.duckdns.org/tijmen/solar-logger . This repository is no longer maintained.
+
 Simple data collecting program for ZeverSolar's Zeverlution Sxxxx "smart" inverters with a network interface (referred to as "combox" by the manufacturer). It collects all the exposed data of the Zeverlution, including current power generation (watts) and today's cummulative power production (kilowatt/hours).
 
 ## Data Collection
